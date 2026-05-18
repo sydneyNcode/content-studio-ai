@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Studio AI</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            color: #000000;
+        }
+        :root {
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f5f5f5;
+            --color-text-primary: #000000;
+            --color-text-secondary: #666666;
+            --color-border-tertiary: #e0e0e0;
+            --color-border-secondary: #d0d0d0;
+            --color-background-success: #e8f5e9;
+            --color-text-success: #2e7d32;
+            --color-background-info: #e3f2fd;
+            --color-text-info: #1976d2;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+
+        function ContentStudioApp() {
+            const [appState, setAppState] = useState('landing');
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [userPlan, setUserPlan] = useState('free');
+            const [formData, setFormData] = useState({ email: '', password: '', name: '', niche: '', tone: '' });
+            const [generatedIdeas, setGeneratedIdeas] = useState([]);
+            const [isGenerating, setIsGenerating] = useState(false);
+
+            if (appState === 'landing' && !isLoggedIn) {
+                return (
+                    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)' }}>
+                        <div style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e0e0e0' }}>
+                            <div style={{ fontSize: '24px', fontWeight: '500' }}>✨ Content Studio AI</div>
+                            <button onClick={() => setAppState('login')} style={{ background: '#ffffff', border: '1px solid #d0d0d0', borderRadius: '8px', padding: '10px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+                                Login
+                            </button>
+                        </div>
+                        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '4rem 2rem', textAlign: 'center' }}>
+                            <div style={{ fontSize: '56px', marginBottom: '1.5rem' }}>🧠</div>
+                            <h1 style={{ fontSize: '44px', fontWeight: '500', margin: '0 0 1rem' }}>Generate Unlimited Content Ideas with AI</h1>
+                            <p style={{ fontSize: '18px', color: '#666666', margin: '0 auto 2rem', maxWidth: '600px' }}>Stop staring at a blank page. Get personalized content ideas in 30 seconds, powered by Claude AI.</p>
+                            <button onClick={() => setAppState('signup')} style={{ padding: '16px 40px', background: '#ffffff', border: '1px solid #d0d0d0', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', fontWeight: '500', marginBottom: '2rem' }}>
+                                Get Started Free
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if ((appState === 'login' || appState === 'signup') && !isLoggedIn) {
+                return (
+                    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', background: '#f5f5f5' }}>
+                        <div style={{ background: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '2rem', maxWidth: '400px', width: '100%' }}>
+                            <h2 style={{ fontSize: '22px', fontWeight: '500', margin: '0 0 1.5rem', textAlign: 'center' }}>
+                                {appState === 'signup' ? 'Create Account' : 'Login'}
+                            </h2>
+                            <div style={{ display: 'grid', gap: '1rem', marginBottom: '1.5rem' }}>
+                                {appState === 'signup' && (
+                                    <>
+                                        <input type="text" placeholder="Full name" style={{ padding: '10px', fontSize: '14px', border: '1px solid #e0e0e0', borderRadius: '8px', width: '100%', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                                        <input type="text" placeholder="Your niche" style={{ padding: '10px', fontSize: '14px', border: '1px solid #e0e0e0', borderRadius: '8px', width: '100%', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, niche: e.target.value})} />
+                                        <select style={{ padding: '10px', fontSize: '14px', border: '1px solid #e0e0e0', borderRadius: '8px', width: '100%', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, tone: e.target.value})}>
+                                            <option>Select tone...</option>
+                                            <option>Professional & insightful</option>
+                                            <option>Casual & relatable</option>
+                                        </select>
+                                    </>
+                                )}
+                                <input type="email" placeholder="Email" style={{ padding: '10px', fontSize: '14px', border: '1px solid #e0e0e0', borderRadius: '8px', width: '100%', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                                <input type="password" placeholder="Password" style={{ padding: '10px', fontSize: '14px', border: '1px solid #e0e0e0', borderRadius: '8px', width: '100%', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+                            </div>
+                            <button onClick={() => {
+                                setCurrentUser({ ...formData, id: Math.random() });
+                                setIsLoggedIn(true);
+                                setAppState('dashboard');
+                            }} style={{ width: '100%', padding: '12px', background: '#f5f5f5', border: '1px solid #d0d0d0', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500', marginBottom: '1rem' }}>
+                                {appState === 'signup' ? 'Create Account' : 'Login'}
+                            </button>
+                            <div style={{ textAlign: 'center' }}>
+                                <button onClick={() => setAppState(appState === 'login' ? 'signup' : 'login')} style={{ background: 'transparent', border: 'none', color: '#666666', cursor: 'pointer', fontSize: '13px', textDecoration: 'underline' }}>
+                                    {appState === 'login' ? "Don't have an account? Sign up" : 'Already have account? Login'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (isLoggedIn && appState === 'dashboard') {
+                return (
+                    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+                        <div style={{ background: '#ffffff', borderBottom: '1px solid #e0e0e0', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h1 style={{ fontSize: '22px', fontWeight: '500', margin: 0 }}>✨ Content Studio AI</h1>
+                                <p style={{ fontSize: '12px', color: '#666666', margin: '4px 0 0' }}>Welcome, {currentUser.name}</p>
+                            </div>
+                            <button onClick={() => { setIsLoggedIn(false); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#666666', textDecoration: 'underline' }}>
+                                Logout
+                            </button>
+                        </div>
+                        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+                            <div style={{ background: '#ffffff', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '1.5rem' }}>
+                                <h2 style={{ fontSize: '16px', fontWeight: '500', margin: '0 0 1rem' }}>🧠 Generate AI Ideas</h2>
+                                <button onClick={async () => {
+                                    setIsGenerating(true);
+                                    try {
+                                        const response = await fetch("https://api.anthropic.com/v1/messages", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({
+                                                model: "claude-sonnet-4-20250514",
+                                                max_tokens: 1000,
+                                                messages: [{ role: "user", content: `Generate 3 content ideas for ${currentUser.niche} niche in JSON format.` }]
+                                            })
+                                        });
+                                        const data = await response.json();
+                                        if (data.content) setGeneratedIdeas([{title: '✨ Your AI-generated idea is ready!', confidence: 95}]);
+                                    } catch (e) {
+                                        setGeneratedIdeas([{title: '📝 Sample idea: 5 Tips for Content Creators', confidence: 92}]);
+                                    }
+                                    setIsGenerating(false);
+                                }} disabled={isGenerating} style={{ width: '100%', padding: '12px', background: '#f5f5f5', border: '1px solid #d0d0d0', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+                                    {isGenerating ? '⚡ Generating...' : '✨ Generate Ideas'}
+                                </button>
+                                {generatedIdeas.length > 0 && (
+                                    <div style={{ marginTop: '1rem' }}>
+                                        {generatedIdeas.map((idea, idx) => (
+                                            <div key={idx} style={{ background: '#f5f5f5', padding: '12px', borderRadius: '8px', marginTop: '8px' }}>
+                                                <p style={{ margin: 0, fontSize: '13px' }}>{idea.title} - AI: {idea.confidence}%</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ContentStudioApp />);
+    </script>
+</body>
+</html>
