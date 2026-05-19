@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Studio AI</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body.light-mode { 
+            font-family: 'Poppins', sans-serif; 
+            background: #ffffff; 
+            color: #1a1a1a; 
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode { 
+            font-family: 'Poppins', sans-serif; 
+            background: #2a2a2a; 
+            color: #f5f5f5; 
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+        h1 { font-size: 48px; }
+        h2 { font-size: 36px; }
+        h3 { font-size: 24px; }
+        
+        .header { 
+            background: inherit;
+            border-bottom: 1px solid;
+            padding: 1.5rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .header { border-color: #f0f0f0; }
+        .dark-mode .header { border-color: #3a3a3a; }
+        
+        .logo { 
+            font-size: 22px; 
+            font-weight: 600; 
+            letter-spacing: 1px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .header-right { display: flex; gap: 2rem; align-items: center; }
+        
+        .nav { display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
+        .nav-link { 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            border: none; 
+            background: transparent; 
+            padding: 8px 0; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.3s;
+            color: inherit;
+        }
+        
+        .light-mode .nav-link { color: #666; }
+        .dark-mode .nav-link { color: #aaa; }
+        
+        .nav-link:hover { color: #1a1a1a; }
+        .dark-mode .nav-link:hover { color: #f5f5f5; }
+        .nav-link.active { color: #8B1538; border-bottom-color: #8B1538; }
+        
+        .mode-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            transition: transform 0.3s ease;
+        }
+        .mode-toggle:hover { transform: scale(1.1); }
+        
+        .badge { background: #8B1538; color: white; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: 600; margin-left: 0.5rem; }
+        
+        .hero { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            padding: 6rem 2rem; 
+            text-align: center; 
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        .hero h1 { margin-bottom: 1rem; letter-spacing: -1px; }
+        .hero p { font-size: 18px; margin-bottom: 2rem; color: #666; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .dark-mode .hero p { color: #aaa; }
+        
+        .email-section { 
+            background: #f8f8f8; 
+            padding: 3rem 2rem; 
+            text-align: center; 
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dark-mode .email-section {
+            background: #333333;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        .email-section h2 { font-size: 28px; margin-bottom: 0.5rem; }
+        .email-form { 
+            display: flex; 
+            gap: 0.5rem; 
+            max-width: 500px; 
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .email-form input { 
+            flex: 1; 
+            min-width: 200px;
+            padding: 12px 16px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            font-size: 14px;
+            background: white;
+            color: #1a1a1a;
+        }
+        .dark-mode .email-form input {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+            color: #f5f5f5;
+        }
+        
+        .email-form button { 
+            background: #1a1a1a; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .email-form button:hover { background: #333; }
+        
+        .btn { 
+            background: #1a1a1a; 
+            color: white; 
+            border: none; 
+            padding: 12px 32px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            margin: 0 0.5rem;
+        }
+        .btn:hover { background: #333; }
+        .btn:disabled { background: #ccc; }
+        .btn-secondary { 
+            background: white; 
+            color: #1a1a1a; 
+            border: 1px solid #ddd; 
+        }
+        .dark-mode .btn-secondary {
+            background: #3a3a3a;
+            color: #f5f5f5;
+            border: 1px solid #4a4a4a;
+        }
+        .btn-secondary:hover { border-color: #1a1a1a; background: #f8f8f8; }
+        .dark-mode .btn-secondary:hover { border-color: #f5f5f5; background: #4a4a4a; }
+        
+        .btn-crimson { background: #8B1538; color: white; }
+        .btn-crimson:hover { background: #6b0f2b; }
+        .btn-small { padding: 8px 16px; font-size: 13px; }
+        
+        .features { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 3rem; 
+            padding: 4rem 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        .feature-card { text-align: center; }
+        .feature-icon { font-size: 48px; margin-bottom: 1.5rem; }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 20px; }
+        .feature-card p { color: #666; font-size: 14px; }
+        .dark-mode .feature-card p { color: #aaa; }
+        
+        .pricing { 
+            padding: 4rem 2rem; 
+            background: #f8f8f8; 
+        }
+        .dark-mode .pricing {
+            background: #333333;
+        }
+        
+        .pricing h2 { text-align: center; margin-bottom: 3rem; }
+        .pricing-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 2rem; 
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        .pricing-card { 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .dark-mode .pricing-card {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+        
+        .pricing-card:hover { border-color: #8B1538; box-shadow: 0 5px 20px rgba(139,21,56,0.1); }
+        .pricing-card.featured { border-color: #8B1538; box-shadow: 0 5px 20px rgba(139,21,56,0.15); }
+        .pricing-card h3 { font-size: 20px; margin-bottom: 1rem; }
+        .price { font-size: 40px; font-weight: 600; }
+        .pricing-list { list-style: none; margin: 1.5rem 0 2rem 0; text-align: left; }
+        .pricing-list li { padding: 0.75rem 0; color: #666; font-size: 14px; }
+        .dark-mode .pricing-list li { color: #aaa; }
+        .pricing-list li:before { content: "✓ "; color: #8B1538; font-weight: bold; margin-right: 0.5rem; }
+        
+        .auth-form { 
+            max-width: 420px; 
+            margin: 4rem auto; 
+            padding: 2.5rem; 
+            background: white; 
+            border-radius: 12px; 
+            border: 1px solid #e0e0e0;
+        }
+        .dark-mode .auth-form {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+        
+        .auth-form h2 { text-align: center; margin-bottom: 2rem; font-size: 28px; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600; 
+            font-size: 14px;
+        }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 11px 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            color: #1a1a1a;
+            transition: all 0.3s;
+        }
+        .dark-mode .form-group input,
+        .dark-mode .form-group select,
+        .dark-mode .form-group textarea {
+            background: #4a4a4a;
+            border-color: #5a5a5a;
+            color: #f5f5f5;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #888888;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+            outline: none; 
+            border-color: #1a1a1a;
+        }
+        .dark-mode .form-group input:focus,
+        .dark-mode .form-group select:focus,
+        .dark-mode .form-group textarea:focus {
+            border-color: #8B1538;
+        }
+        
+        .error { color: #8B1538; font-size: 13px; margin-top: 0.5rem; }
+        
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .dashboard-header { margin-bottom: 2.5rem; }
+        .dashboard-header h2 { font-size: 32px; margin-bottom: 0.5rem; }
+        .dashboard-header p { color: #666; font-size: 15px; }
+        .dark-mode .dashboard-header p { color: #aaa; }
+        
+        .announcement-banner { 
+            background: linear-gradient(135deg, #8B153815, #8B153805);
+            border: 1px solid #8B153830;
+            border-left: 4px solid #8B1538;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .widgets-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1.5rem; 
+            margin-bottom: 2.5rem;
+        }
+        .widget { 
+            background: white; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .dark-mode .widget {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+        
+        .widget:hover { border-color: #8B1538; }
+        .widget-label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; }
+        .dark-mode .widget-label { color: #777; }
+        
+        .widget-value { font-size: 36px; font-weight: 600; margin-bottom: 0.5rem; }
+        .widget-subtext { font-size: 13px; color: #666; }
+        .dark-mode .widget-subtext { color: #aaa; }
+        
+        .section-card { 
+            background: white; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 2rem; 
+            margin-bottom: 2rem;
+        }
+        .dark-mode .section-card {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+        
+        .section-card h3 { font-size: 20px; margin-bottom: 1.5rem; }
+        
+        .quick-actions { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 1rem; 
+            margin-bottom: 2rem;
+        }
+        .action-btn { 
+            background: #f8f8f8; 
+            border: 1px solid #e0e0e0; 
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            color: #1a1a1a;
+        }
+        .dark-mode .action-btn {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+            color: #f5f5f5;
+        }
+        
+        .action-btn:hover { 
+            background: white;
+            border-color: #8B1538; 
+            box-shadow: 0 2px 8px rgba(139,21,56,0.1);
+        }
+        .dark-mode .action-btn:hover {
+            background: #4a4a4a;
+            border-color: #8B1538;
+            box-shadow: 0 2px 8px rgba(139,21,56,0.3);
+        }
+        
+        .action-icon { font-size: 32px; margin-bottom: 0.5rem; }
+        .action-text { font-weight: 600; font-size: 14px; }
+        
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+        }
+        
+        .hexagon-photo {
+            width: 140px;
+            height: 140px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            background: linear-gradient(135deg, #8B1538, #c41e3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            box-shadow: 0 10px 40px rgba(139,21,56,0.2);
+            flex-shrink: 0;
+        }
+        .dark-mode .hexagon-photo {
+            box-shadow: 0 10px 40px rgba(139,21,56,0.4);
+        }
+        
+        .profile-info h2 {
+            margin-bottom: 0.5rem;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+        
+        .profile-tier {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 1rem;
+        }
+        .dark-mode .profile-tier { color: #aaa; }
+        
+        .profile-meta {
+            color: #666;
+            font-size: 13px;
+        }
+        .dark-mode .profile-meta { color: #aaa; }
+        
+        .bio-section {
+            margin-top: 2rem;
+        }
+        
+        .bio-box {
+            background: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-size: 14px;
+            line-height: 1.8;
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+            color: #f5f5f5;
+            margin-bottom: 1rem;
+        }
+        
+        .light-mode .bio-box {
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #1a1a1a;
+        }
+        
+        .bio-box::placeholder {
+            color: #888888;
+        }
+        
+        .widget-toggle-section {
+            margin-top: 2rem;
+        }
+        
+        .widget-toggles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .widget-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            user-select: none;
+        }
+        
+        .dark-mode .widget-card {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+        
+        .widget-card:hover {
+            border-color: #8B1538;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139,21,56,0.15);
+        }
+        
+        .dark-mode .widget-card:hover {
+            box-shadow: 0 8px 20px rgba(139,21,56,0.3);
+        }
+        
+        .widget-card.active {
+            border-color: #8B1538;
+            background: rgba(139,21,56,0.05);
+            box-shadow: 0 8px 20px rgba(139,21,56,0.2);
+        }
+        
+        .dark-mode .widget-card.active {
+            background: rgba(139,21,56,0.15);
+            box-shadow: 0 8px 20px rgba(139,21,56,0.3);
+        }
+        
+        .widget-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #8B1538;
+        }
+        
+        .widget-label-text {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .notification { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: #8B1538; 
+            color: white; 
+            padding: 1rem 1.5rem; 
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(139,21,56,0.3);
+            animation: slideUp 0.3s ease-out;
+            z-index: 1000;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .features, .pricing-grid { grid-template-columns: 1fr; }
+            .widgets-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .quick-actions { grid-template-columns: 1fr 1fr; }
+            .nav { gap: 1rem; }
+            .profile-header { flex-direction: column; }
+            .widget-toggles { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const TONE_DESCRIPTIONS = {
+            'Professional': 'Authoritative, corporate, trustworthy',
+            'Casual': 'Friendly, conversational, approachable',
+            'Creative': 'Artistic, expressive, imaginative'
+        };
+
+        const INSTAGRAM_TEMPLATES = [
+            { id: 1, title: 'Hook Formula #1', content: '"I used to... until I discovered..."' },
+            { id: 2, title: 'Story Starter', content: '"Nobody talks about how..."' },
+            { id: 3, title: 'Question Hook', content: '"What if I told you..."' },
+            { id: 4, title: 'Bold Statement', content: '"This changed everything."' },
+            { id: 5, title: 'Curiosity Hook', content: '"This is not what you think..."' },
+            { id: 6, title: 'Benefit Hook', content: '"Here\'s how to... in 3 steps"' },
+        ];
+
+        const TIKTOK_TEMPLATES = [
+            { id: 7, title: 'Trending Format', content: 'Use trending audio + quick cuts' },
+            { id: 8, title: 'Story Time', content: '"Let me tell you about the time..."' },
+            { id: 9, title: 'POV Hook', content: '"POV: You\'re learning..."' },
+            { id: 10, title: 'Before/After', content: 'Visual transformation with text' },
+            { id: 11, title: 'Duet-Bait', content: 'Controversial or relatable statement' },
+            { id: 12, title: 'Educational Tip', content: '1 valuable tip in 15 seconds' },
+        ];
+
+        function ContentStudioApp() {
+            const [currentPage, setCurrentPage] = useState('landing');
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [tier, setTier] = useState('free');
+            const [darkMode, setDarkMode] = useState(false);
+            const [formData, setFormData] = useState({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional', bio: '' });
+            const [loginError, setLoginError] = useState('');
+            const [signupError, setSignupError] = useState('');
+            const [confirmPassword, setConfirmPassword] = useState('');
+            const [users, setUsers] = useState([]);
+            const [emails, setEmails] = useState([]);
+            const [adminEmail, setAdminEmail] = useState('sydneyhoeft@gmail.com');
+            const [announcement, setAnnouncement] = useState('Welcome to Content Studio AI! 🌹');
+            const [visibleWidgets, setVisibleWidgets] = useState(['announcement', 'plan', 'ideas', 'points']);
+            const [showNotification, setShowNotification] = useState(false);
+            const [notificationText, setNotificationText] = useState('');
+            const [profileBio, setProfileBio] = useState('');
+
+            useEffect(() => {
+                const saved = localStorage.getItem('csai_state');
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    setUsers(state.users || []);
+                    setEmails(state.emails || []);
+                    setAdminEmail(state.adminEmail || 'sydneyhoeft@gmail.com');
+                    setAnnouncement(state.announcement || 'Welcome to Content Studio AI! 🌹');
+                    setVisibleWidgets(state.visibleWidgets || ['announcement', 'plan', 'ideas', 'points']);
+                }
+                
+                const darkModeSaved = localStorage.getItem('csai_darkMode');
+                if (darkModeSaved) {
+                    setDarkMode(JSON.parse(darkModeSaved));
+                }
+                
+                const currentUserSaved = localStorage.getItem('csai_currentUser');
+                if (currentUserSaved) {
+                    const user = JSON.parse(currentUserSaved);
+                    setCurrentUser(user);
+                    setProfileBio(user.bio || '');
+                    setIsLoggedIn(true);
+                    setTier(user.tier || 'free');
+                    setCurrentPage('app');
+                }
+            }, []);
+
+            useEffect(() => {
+                localStorage.setItem('csai_state', JSON.stringify({
+                    users,
+                    emails,
+                    adminEmail,
+                    announcement,
+                    visibleWidgets,
+                }));
+                if (currentUser) {
+                    localStorage.setItem('csai_currentUser', JSON.stringify(currentUser));
+                }
+            }, [users, emails, adminEmail, announcement, visibleWidgets, currentUser]);
+
+            useEffect(() => {
+                localStorage.setItem('csai_darkMode', JSON.stringify(darkMode));
+                document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+            }, [darkMode]);
+
+            const showNotif = (text) => {
+                setNotificationText(text);
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 3000);
+            };
+
+            const handleSignup = () => {
+                setSignupError('');
+                if (!formData.email || !formData.password || !formData.name || !formData.username || !formData.niche) {
+                    setSignupError('Please fill in all fields');
+                    return;
+                }
+                if (formData.password !== confirmPassword) {
+                    setSignupError('Passwords do not match');
+                    return;
+                }
+                if (users.find(u => u.email === formData.email)) {
+                    setSignupError('Email already registered');
+                    return;
+                }
+
+                const newUser = {
+                    id: Date.now(),
+                    email: formData.email,
+                    password: formData.password,
+                    name: formData.name,
+                    username: formData.username,
+                    niche: formData.niche,
+                    tone: formData.tone,
+                    bio: formData.bio,
+                    tier: tier,
+                };
+
+                setUsers([...users, newUser]);
+                setCurrentUser(newUser);
+                setProfileBio(formData.bio);
+                setIsLoggedIn(true);
+                setTier(tier);
+                setCurrentPage('app');
+                setFormData({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional', bio: '' });
+                setConfirmPassword('');
+                showNotif('Welcome to Content Studio AI! 🌹');
+            };
+
+            const handleLogin = () => {
+                setLoginError('');
+                if (!formData.email || !formData.password) {
+                    setLoginError('Please enter email and password');
+                    return;
+                }
+                const user = users.find(u => u.email === formData.email && u.password === formData.password);
+                if (!user) {
+                    setLoginError('Invalid email or password');
+                    return;
+                }
+                setCurrentUser(user);
+                setProfileBio(user.bio || '');
+                setTier(user.tier || 'free');
+                setIsLoggedIn(true);
+                setCurrentPage('app');
+                setFormData({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional', bio: '' });
+                setConfirmPassword('');
+                showNotif(`Welcome back, ${user.name}!`);
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('csai_currentUser');
+                setCurrentUser(null);
+                setIsLoggedIn(false);
+                setCurrentPage('landing');
+            };
+
+            const updateProfileBio = (newBio) => {
+                setProfileBio(newBio);
+                const updatedUser = {...currentUser, bio: newBio};
+                setCurrentUser(updatedUser);
+            };
+
+            const addNewsletterEmail = () => {
+                if (!formData.email || !formData.email.includes('@')) {
+                    alert('Please enter a valid email');
+                    return;
+                }
+                if (!emails.includes(formData.email)) {
+                    setEmails([...emails, formData.email]);
+                }
+                showNotif('Check your email!');
+                setFormData({...formData, email: ''});
+            };
+
+            if (currentPage === 'landing' && !isLoggedIn) {
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo">Content Studio AI</div>
+                            <div className="header-right">
+                                <div className="nav">
+                                    <button className="nav-link" onClick={() => setCurrentPage('login')}>Login</button>
+                                    <button className="nav-link btn" onClick={() => setCurrentPage('signup')}>Sign Up</button>
+                                </div>
+                                <button className="mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+                                    {darkMode ? '☀️' : '🌙'}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="hero">
+                            <h1>Your Ultimate Content Creation Toolkit</h1>
+                            <p>Create. Plan. Learn. Grow. Everything a creator needs to succeed.</p>
+                            <button className="btn" onClick={() => setCurrentPage('signup')}>Get Started Free</button>
+                            <button className="btn btn-secondary" onClick={() => setCurrentPage('login')}>Login</button>
+                        </div>
+                        <div className="features">
+                            <div className="feature-card">
+                                <div className="feature-icon">🤖</div>
+                                <h3>Crimson AI</h3>
+                                <p>Unlimited content ideas tailored to your niche and tone.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">📅</div>
+                                <h3>Smart Calendar</h3>
+                                <p>Plan your content week by week with AI suggestions.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">📚</div>
+                                <h3>Content Templates</h3>
+                                <p>Ready-to-use hooks for Instagram and TikTok.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">🎮</div>
+                                <h3>Gamification</h3>
+                                <p>Level up, build streaks, earn badges, and stay motivated.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">👥</div>
+                                <h3>Creator Community</h3>
+                                <p>Connect with creators in your niche and grow together.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">🎤</div>
+                                <h3>Power Hour Calls</h3>
+                                <p>Monthly group coaching with the creator community.</p>
+                            </div>
+                        </div>
+
+                        <div className="email-section">
+                            <h2>Join 1000+ Creators</h2>
+                            <p>Get weekly content tips, algorithm insights, and strategies</p>
+                            <div className="email-form">
+                                <input 
+                                    type="email" 
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    placeholder="your@email.com"
+                                />
+                                <button onClick={addNewsletterEmail}>Get Free Tips</button>
+                            </div>
+                        </div>
+
+                        <div className="pricing">
+                            <h2>Simple. Powerful. Affordable.</h2>
+                            <div className="pricing-grid">
+                                <div className="pricing-card">
+                                    <h3>Starter</h3>
+                                    <div className="price">Free</div>
+                                    <ul className="pricing-list">
+                                        <li>5 AI ideas/month</li>
+                                        <li>Content templates</li>
+                                        <li>Community access</li>
+                                    </ul>
+                                    <button className="btn" onClick={() => setCurrentPage('signup')}>Get Started</button>
+                                </div>
+                                <div className="pricing-card featured">
+                                    <h3>Creator Pro</h3>
+                                    <div className="price">$29</div>
+                                    <div style={{ color: '#666', fontSize: '14px', marginBottom: '1rem' }}>per month</div>
+                                    <ul className="pricing-list">
+                                        <li>Unlimited AI ideas</li>
+                                        <li>Smart calendar</li>
+                                        <li>Advanced templates</li>
+                                        <li>Priority Power Hour</li>
+                                    </ul>
+                                    <button className="btn btn-crimson" onClick={() => setCurrentPage('signup')}>Start Free Trial</button>
+                                </div>
+                            </div>
+                        </div>
+                        {showNotification && <div className="notification">{notificationText}</div>}
+                    </div>
+                );
+            }
+
+            if ((currentPage === 'login' || currentPage === 'signup') && !isLoggedIn) {
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo" onClick={() => setCurrentPage('landing')} style={{ cursor: 'pointer' }}>Content Studio AI</div>
+                            <div className="header-right">
+                                <button className="mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+                                    {darkMode ? '☀️' : '🌙'}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="auth-form">
+                            <h2>{currentPage === 'signup' ? 'Create Your Account' : 'Welcome Back'}</h2>
+                            {currentPage === 'signup' && (
+                                <>
+                                    <div className="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Sydney Hoeft" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Username</label>
+                                        <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} placeholder="sydney_creates" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Your Niche</label>
+                                        <input type="text" value={formData.niche} onChange={(e) => setFormData({...formData, niche: e.target.value})} placeholder="e.g., SaaS, Fitness" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Bio (Optional)</label>
+                                        <textarea value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} placeholder="Tell us about yourself..." rows="3"></textarea>
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Content Tone</label>
+                                        <select value={formData.tone} onChange={(e) => setFormData({...formData, tone: e.target.value})}>
+                                            <option value="Professional">Professional - {TONE_DESCRIPTIONS['Professional']}</option>
+                                            <option value="Casual">Casual - {TONE_DESCRIPTIONS['Casual']}</option>
+                                            <option value="Creative">Creative - {TONE_DESCRIPTIONS['Creative']}</option>
+                                        </select>
+                                    </div>
+                                </>
+                            )}
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="your@email.com" />
+                            </div>
+                            <div className="form-group">
+                                <label>Password</label>
+                                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder="••••••••" />
+                            </div>
+                            {currentPage === 'signup' && (
+                                <div className="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" />
+                                </div>
+                            )}
+                            {loginError && <div className="error">{loginError}</div>}
+                            {signupError && <div className="error">{signupError}</div>}
+                            <button className="btn" style={{ width: '100%', marginTop: '1.5rem' }} onClick={currentPage === 'login' ? handleLogin : handleSignup}>
+                                {currentPage === 'signup' ? 'Create Account' : 'Login'}
+                            </button>
+                            <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '13px', color: '#666' }}>
+                                {currentPage === 'signup' ? 'Already have an account? ' : "Don't have an account? "}
+                                <button style={{ background: 'none', border: 'none', color: '#8B1538', cursor: 'pointer', fontWeight: '600' }} onClick={() => setCurrentPage(currentPage === 'signup' ? 'login' : 'signup')}>
+                                    {currentPage === 'signup' ? 'Login' : 'Sign up'}
+                                </button>
+                            </p>
+                        </div>
+                        {showNotification && <div className="notification">{notificationText}</div>}
+                    </div>
+                );
+            }
+
+            if (isLoggedIn) {
+                const isAdmin = currentUser.email === adminEmail;
+
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo">Content Studio AI</div>
+                            <div className="header-right">
+                                <div className="nav">
+                                    <button className={`nav-link ${currentPage === 'app' ? 'active' : ''}`} onClick={() => setCurrentPage('app')}>Dashboard</button>
+                                    <button className={`nav-link ${currentPage === 'profile' ? 'active' : ''}`} onClick={() => setCurrentPage('profile')}>Profile</button>
+                                    <button className={`nav-link ${currentPage === 'templates' ? 'active' : ''}`} onClick={() => setCurrentPage('templates')}>Templates</button>
+                                    <button className={`nav-link ${currentPage === 'community' ? 'active' : ''}`} onClick={() => setCurrentPage('community')}>Community</button>
+                                    {isAdmin && (
+                                        <button className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`} onClick={() => setCurrentPage('admin')}>Admin <span className="badge">ADMIN</span></button>
+                                    )}
+                                    <button className="nav-link" onClick={handleLogout}>Logout</button>
+                                </div>
+                                <button className="mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+                                    {darkMode ? '☀️' : '🌙'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {currentPage === 'app' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Welcome, {currentUser.name}! 🌹</h2>
+                                    <p>{profileBio && <span style={{ marginRight: '1rem' }}>"{profileBio}"</span>} {tier === 'pro' ? '✨ Creator Pro' : 'Starter Plan'}</p>
+                                </div>
+
+                                {announcement && visibleWidgets.includes('announcement') && (
+                                    <div className="announcement-banner">
+                                        <p>{announcement}</p>
+                                    </div>
+                                )}
+
+                                <div className="widgets-grid">
+                                    {visibleWidgets.includes('plan') && (
+                                        <div className="widget">
+                                            <div className="widget-label">📊 Plan</div>
+                                            <div className="widget-value" style={{ fontSize: '20px' }}>{tier === 'pro' ? 'Pro' : 'Free'}</div>
+                                            <div className="widget-subtext">Your current tier</div>
+                                        </div>
+                                    )}
+                                    {visibleWidgets.includes('ideas') && (
+                                        <div className="widget">
+                                            <div className="widget-label">✨ AI Ideas</div>
+                                            <div className="widget-value">{tier === 'pro' ? '∞' : '5'}</div>
+                                            <div className="widget-subtext">Monthly limit</div>
+                                        </div>
+                                    )}
+                                    {visibleWidgets.includes('points') && (
+                                        <div className="widget">
+                                            <div className="widget-label">⚡ Points</div>
+                                            <div className="widget-value">0</div>
+                                            <div className="widget-subtext">Keep creating</div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="quick-actions">
+                                    <button className="action-btn" onClick={() => showNotif('Coming soon!')}>
+                                        <div className="action-icon">💬</div>
+                                        <div className="action-text">Chat Crimson</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => setCurrentPage('templates')}>
+                                        <div className="action-icon">📚</div>
+                                        <div className="action-text">Templates</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => showNotif('Calendar coming soon!')}>
+                                        <div className="action-icon">📅</div>
+                                        <div className="action-text">Calendar</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => setCurrentPage('community')}>
+                                        <div className="action-icon">👥</div>
+                                        <div className="action-text">Community</div>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === 'profile' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2 style={{ fontStyle: 'italic' }}>Your Profile</h2>
+                                </div>
+
+                                <div className="section-card">
+                                    <div className="profile-header">
+                                        <div className="hexagon-photo">📸</div>
+                                        <div className="profile-info">
+                                            <h2 style={{ fontStyle: 'italic' }}>{currentUser.name}</h2>
+                                            <p className="profile-tier">@{currentUser.username}</p>
+                                            <p className="profile-meta">{currentUser.niche} • {currentUser.tone} tone</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bio-section">
+                                        <h3>Edit Bio</h3>
+                                        <textarea 
+                                            className="bio-box"
+                                            value={profileBio}
+                                            onChange={(e) => updateProfileBio(e.target.value)}
+                                            placeholder="Tell your audience about yourself..."
+                                        />
+                                        <button className="btn btn-crimson" onClick={() => showNotif('Bio updated!')}>Save Bio</button>
+                                    </div>
+                                </div>
+
+                                <div className="section-card">
+                                    <h3>Dashboard Widgets</h3>
+                                    <p style={{ color: '#666', fontSize: '14px', marginBottom: '1.5rem' }}>Choose which widgets to display on your dashboard:</p>
+                                    <div className="widget-toggles">
+                                        {['announcement', 'plan', 'ideas', 'points'].map(widget => (
+                                            <label key={widget} className={`widget-card ${visibleWidgets.includes(widget) ? 'active' : ''}`}>
+                                                <input 
+                                                    type="checkbox"
+                                                    className="widget-checkbox"
+                                                    checked={visibleWidgets.includes(widget)}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setVisibleWidgets([...visibleWidgets, widget]);
+                                                        } else {
+                                                            setVisibleWidgets(visibleWidgets.filter(w => w !== widget));
+                                                        }
+                                                    }}
+                                                />
+                                                <span className="widget-label-text">{widget.charAt(0).toUpperCase() + widget.slice(1)}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === 'templates' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Content Templates</h2>
+                                    <p>Copy-paste ready content hooks</p>
+                                </div>
+                                <div className="section-card">
+                                    <h3>📸 Instagram</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                                        {INSTAGRAM_TEMPLATES.map(t => (
+                                            <div key={t.id} style={{ background: darkMode ? '#3a3a3a' : 'white', border: `1px solid ${darkMode ? '#4a4a4a' : '#e0e0e0'}`, padding: '1.5rem', borderRadius: '12px' }}>
+                                                <h4>{t.title}</h4>
+                                                <div style={{ background: darkMode ? '#4a4a4a' : '#f8f8f8', padding: '1rem', borderRadius: '6px', fontSize: '13px', margin: '1rem 0' }}>{t.content}</div>
+                                                <button className="btn btn-secondary btn-small" onClick={() => { navigator.clipboard.writeText(t.content); showNotif('Copied!'); }}>Copy</button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <h3>🎬 TikTok</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                        {TIKTOK_TEMPLATES.map(t => (
+                                            <div key={t.id} style={{ background: darkMode ? '#3a3a3a' : 'white', border: `1px solid ${darkMode ? '#4a4a4a' : '#e0e0e0'}`, padding: '1.5rem', borderRadius: '12px' }}>
+                                                <h4>{t.title}</h4>
+                                                <div style={{ background: darkMode ? '#4a4a4a' : '#f8f8f8', padding: '1rem', borderRadius: '6px', fontSize: '13px', margin: '1rem 0' }}>{t.content}</div>
+                                                <button className="btn btn-secondary btn-small" onClick={() => { navigator.clipboard.writeText(t.content); showNotif('Copied!'); }}>Copy</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === 'community' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Creator Community</h2>
+                                    <p>Connect and grow together</p>
+                                </div>
+                                <div className="section-card">
+                                    <h3>👥 Active Creators ({users.length})</h3>
+                                    <div style={{ marginTop: '1rem' }}>
+                                        {users.map(u => (
+                                            <div key={u.id} style={{ padding: '1rem', borderBottom: `1px solid ${darkMode ? '#4a4a4a' : '#e0e0e0'}` }}>
+                                                <p style={{ fontWeight: '600' }}>@{u.username}</p>
+                                                <p style={{ fontSize: '13px', color: darkMode ? '#aaa' : '#666' }}>{u.niche} • {u.tone} tone</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === 'admin' && isAdmin && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Admin Panel</h2>
+                                    <p>Manage your platform</p>
+                                </div>
+                                <div className="section-card">
+                                    <h3>Admin Tools Coming Soon</h3>
+                                    <p>Dashboard customization and user management features will be added here.</p>
+                                </div>
+                            </div>
+                        )}
+                        {showNotification && <div className="notification">{notificationText}</div>}
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ContentStudioApp />);
+    </script>
+</body>
+</html>
