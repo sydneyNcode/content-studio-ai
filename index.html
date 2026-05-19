@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Studio AI - Your Content Creation Toolkit</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #ffffff; 
+            color: #1a1a1a; 
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+        h1 { font-size: 48px; }
+        h2 { font-size: 36px; }
+        h3 { font-size: 24px; }
+        
+        .header { 
+            background: #ffffff; 
+            border-bottom: 1px solid #f0f0f0; 
+            padding: 1.5rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { 
+            font-size: 22px; 
+            font-weight: 600; 
+            letter-spacing: 1px;
+            font-family: 'Cormorant Garamond', serif;
+            color: #1a1a1a; 
+        }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav-link { 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            border: none; 
+            background: transparent; 
+            padding: 8px 0; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.3s;
+        }
+        .nav-link:hover { color: #1a1a1a; }
+        .nav-link.active { color: #c41e3a; border-bottom-color: #c41e3a; }
+        .badge { background: #c41e3a; color: white; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: 600; margin-left: 0.5rem; }
+        
+        .hero { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            padding: 6rem 2rem; 
+            text-align: center; 
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .hero h1 { margin-bottom: 1rem; letter-spacing: -1px; }
+        .hero p { font-size: 18px; margin-bottom: 2rem; color: #666; max-width: 700px; margin-left: auto; margin-right: auto; }
+        
+        .email-section { 
+            background: #f8f8f8; 
+            padding: 3rem 2rem; 
+            text-align: center; 
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .email-section h2 { font-size: 28px; margin-bottom: 0.5rem; }
+        .email-form { 
+            display: flex; 
+            gap: 0.5rem; 
+            max-width: 500px; 
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .email-form input { 
+            flex: 1; 
+            min-width: 200px;
+            padding: 12px 16px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .email-form button { 
+            background: #1a1a1a; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .email-form button:hover { background: #333; }
+        
+        .btn { 
+            background: #1a1a1a; 
+            color: white; 
+            border: none; 
+            padding: 12px 32px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            margin: 0 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn:hover { background: #333; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-secondary { background: white; color: #1a1a1a; border: 1px solid #ddd; }
+        .btn-secondary:hover { border-color: #1a1a1a; background: #f8f8f8; }
+        .btn-danger { background: #c41e3a; }
+        .btn-danger:hover { background: #a01830; }
+        .btn-small { padding: 8px 16px; font-size: 13px; }
+        .btn-crimson { background: #c41e3a; }
+        .btn-crimson:hover { background: #a01830; }
+        
+        .features { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 3rem; 
+            padding: 4rem 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        .feature-card { text-align: center; }
+        .feature-icon { font-size: 48px; margin-bottom: 1.5rem; }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 20px; }
+        .feature-card p { color: #666; font-size: 14px; line-height: 1.6; }
+        
+        .pricing { padding: 4rem 2rem; background: #f8f8f8; border-top: 1px solid #f0f0f0; }
+        .pricing h2 { text-align: center; margin-bottom: 3rem; }
+        .pricing-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 2rem; 
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        .pricing-card { 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .pricing-card:hover { border-color: #c41e3a; box-shadow: 0 5px 20px rgba(196,30,58,0.1); }
+        .pricing-card.featured { border-color: #c41e3a; box-shadow: 0 5px 20px rgba(196,30,58,0.15); }
+        .pricing-card h3 { font-size: 20px; margin-bottom: 1rem; }
+        .price { font-size: 40px; font-weight: 600; margin-bottom: 0.5rem; }
+        .price-period { color: #666; font-size: 14px; margin-bottom: 1.5rem; }
+        .pricing-list { list-style: none; margin-bottom: 2rem; text-align: left; }
+        .pricing-list li { padding: 0.75rem 0; color: #666; font-size: 14px; }
+        .pricing-list li:before { content: "✓ "; color: #c41e3a; font-weight: bold; margin-right: 0.5rem; }
+        
+        .auth-form { 
+            max-width: 420px; 
+            margin: 4rem auto; 
+            padding: 2.5rem; 
+            background: white; 
+            border-radius: 12px; 
+            border: 1px solid #e0e0e0;
+        }
+        .auth-form h2 { text-align: center; margin-bottom: 2rem; font-size: 28px; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600; 
+            color: #1a1a1a; 
+            font-size: 14px;
+        }
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 11px 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            font-family: 'Poppins', sans-serif;
+            transition: border 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus { 
+            outline: none; 
+            border-color: #1a1a1a;
+        }
+        .error { color: #c41e3a; font-size: 13px; margin-top: 0.5rem; }
+        .success { color: #2e7d32; font-size: 13px; margin-top: 0.5rem; }
+        
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .dashboard-header { margin-bottom: 2.5rem; }
+        .dashboard-header h2 { font-size: 32px; margin-bottom: 0.5rem; }
+        .dashboard-header p { color: #666; font-size: 15px; }
+        
+        .announcement-banner { 
+            background: linear-gradient(135deg, #c41e3a15, #c41e3a05);
+            border: 1px solid #c41e3a30;
+            border-left: 4px solid #c41e3a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .widgets-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1.5rem; 
+            margin-bottom: 2.5rem;
+        }
+        .widget { 
+            background: white; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .widget:hover { border-color: #c41e3a; }
+        .widget-label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; }
+        .widget-value { font-size: 36px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
+        .widget-subtext { font-size: 13px; color: #666; }
+        
+        .section-card { 
+            background: white; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 2rem; 
+            margin-bottom: 2rem;
+        }
+        .section-card h3 { font-size: 20px; margin-bottom: 1.5rem; }
+        
+        .quick-actions { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 1rem; 
+            margin-bottom: 2rem;
+        }
+        .action-btn { 
+            background: #f8f8f8; 
+            border: 1px solid #e0e0e0; 
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            text-decoration: none; 
+            color: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+        }
+        .action-btn:hover { 
+            background: white;
+            border-color: #c41e3a; 
+            box-shadow: 0 2px 8px rgba(196,30,58,0.1);
+        }
+        .action-icon { font-size: 32px; margin-bottom: 0.5rem; }
+        .action-text { font-weight: 600; font-size: 14px; }
+        
+        .section-card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+        
+        .tier-selector { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .tier-option {
+            flex: 1;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .tier-option:hover { border-color: #c41e3a; }
+        .tier-option.selected { border-color: #c41e3a; background: #c41e3a10; }
+        .tier-option h4 { margin-bottom: 0.5rem; }
+        .tier-option p { font-size: 13px; color: #666; }
+        
+        .pro-lock { color: #c41e3a; font-weight: 600; padding: 1rem; text-align: center; background: #c41e3a10; border-radius: 8px; }
+        
+        .notification { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: #c41e3a; 
+            color: white; 
+            padding: 1rem 1.5rem; 
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(196,30,58,0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .features, .pricing-grid { grid-template-columns: 1fr; }
+            .widgets-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .quick-actions { grid-template-columns: 1fr 1fr; }
+            .nav { gap: 1rem; }
+            .nav-link { font-size: 12px; }
+            .tier-selector { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const TONE_DESCRIPTIONS = {
+            'Professional': 'Authoritative, corporate, trustworthy',
+            'Casual': 'Friendly, conversational, approachable',
+            'Creative': 'Artistic, expressive, imaginative'
+        };
+
+        const INSTAGRAM_TEMPLATES = [
+            { id: 1, title: 'Hook Formula #1', content: '"I used to... until I discovered..."' },
+            { id: 2, title: 'Story Starter', content: '"Nobody talks about how..."' },
+            { id: 3, title: 'Question Hook', content: '"What if I told you..."' },
+            { id: 4, title: 'Bold Statement', content: '"This changed everything."' },
+        ];
+
+        const TIKTOK_TEMPLATES = [
+            { id: 5, title: 'Trending Format', content: 'Use trending audio + quick cuts' },
+            { id: 6, title: 'Story Time', content: '"Let me tell you about the time..."' },
+            { id: 7, title: 'POV Hook', content: '"POV: You\'re learning..."' },
+            { id: 8, title: 'Before/After', content: 'Visual transformation with text' },
+        ];
+
+        function ContentStudioApp() {
+            const [currentPage, setCurrentPage] = useState('landing');
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [tier, setTier] = useState('free');
+            const [formData, setFormData] = useState({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional' });
+            const [loginError, setLoginError] = useState('');
+            const [signupError, setSignupError] = useState('');
+            const [confirmPassword, setConfirmPassword] = useState('');
+            const [users, setUsers] = useState([]);
+            const [emails, setEmails] = useState([]);
+            const [showNotification, setShowNotification] = useState(false);
+            const [notificationText, setNotificationText] = useState('');
+
+            useEffect(() => {
+                const savedUsers = localStorage.getItem('csai_users');
+                const savedCurrentUser = localStorage.getItem('csai_currentUser');
+                const savedEmails = localStorage.getItem('csai_emails');
+
+                if (savedUsers) setUsers(JSON.parse(savedUsers));
+                if (savedEmails) setEmails(JSON.parse(savedEmails));
+                if (savedCurrentUser) {
+                    const user = JSON.parse(savedCurrentUser);
+                    setCurrentUser(user);
+                    setIsLoggedIn(true);
+                    setTier(user.tier || 'free');
+                    setCurrentPage('app');
+                }
+            }, []);
+
+            useEffect(() => {
+                localStorage.setItem('csai_users', JSON.stringify(users));
+                localStorage.setItem('csai_emails', JSON.stringify(emails));
+                if (currentUser) localStorage.setItem('csai_currentUser', JSON.stringify(currentUser));
+            }, [users, emails, currentUser]);
+
+            const showNotif = (text) => {
+                setNotificationText(text);
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 3000);
+            };
+
+            const handleSignup = () => {
+                setSignupError('');
+                if (!formData.email || !formData.password || !formData.name || !formData.username || !formData.niche) {
+                    setSignupError('Please fill in all fields');
+                    return;
+                }
+                if (formData.password !== confirmPassword) {
+                    setSignupError('Passwords do not match');
+                    return;
+                }
+                if (users.find(u => u.email === formData.email)) {
+                    setSignupError('Email already registered');
+                    return;
+                }
+
+                const newUser = {
+                    id: Date.now(),
+                    email: formData.email,
+                    password: formData.password,
+                    name: formData.name,
+                    username: formData.username,
+                    niche: formData.niche,
+                    tone: formData.tone,
+                    tier: tier,
+                    createdAt: new Date().toISOString(),
+                };
+
+                setUsers([...users, newUser]);
+                setCurrentUser(newUser);
+                setIsLoggedIn(true);
+                setCurrentPage('app');
+                setFormData({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional' });
+                setConfirmPassword('');
+                setTier('free');
+                showNotif('Welcome to Content Studio AI! 🌹');
+            };
+
+            const handleLogin = () => {
+                setLoginError('');
+                if (!formData.email || !formData.password) {
+                    setLoginError('Please enter email and password');
+                    return;
+                }
+                const user = users.find(u => u.email === formData.email && u.password === formData.password);
+                if (!user) {
+                    setLoginError('Invalid email or password');
+                    return;
+                }
+                setCurrentUser(user);
+                setTier(user.tier || 'free');
+                setIsLoggedIn(true);
+                setCurrentPage('app');
+                setFormData({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional' });
+                setConfirmPassword('');
+                showNotif(`Welcome back, ${user.name}!`);
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('csai_currentUser');
+                setCurrentUser(null);
+                setIsLoggedIn(false);
+                setCurrentPage('landing');
+                setFormData({ email: '', password: '', name: '', username: '', niche: '', tone: 'Professional' });
+                setTier('free');
+            };
+
+            const addNewsletterEmail = () => {
+                if (!formData.email || !formData.email.includes('@')) {
+                    alert('Please enter a valid email');
+                    return;
+                }
+                if (!emails.includes(formData.email)) {
+                    setEmails([...emails, formData.email]);
+                }
+                showNotif('Check your email for tips!');
+                setFormData({...formData, email: ''});
+            };
+
+            if (currentPage === 'landing' && !isLoggedIn) {
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo">Content Studio AI</div>
+                            <div className="nav">
+                                <button className="nav-link" onClick={() => setCurrentPage('login')}>Login</button>
+                                <button className="nav-link btn" onClick={() => setCurrentPage('signup')}>Sign Up</button>
+                            </div>
+                        </div>
+                        <div className="hero">
+                            <h1>Your Ultimate Content Creation Toolkit</h1>
+                            <p>Create. Plan. Learn. Grow. Everything a creator needs to succeed in one beautiful platform.</p>
+                            <button className="btn" onClick={() => setCurrentPage('signup')}>Get Started Free</button>
+                            <button className="btn btn-secondary" onClick={() => setCurrentPage('login')}>Login</button>
+                        </div>
+                        <div className="features">
+                            <div className="feature-card">
+                                <div className="feature-icon">🤖</div>
+                                <h3>Crimson AI</h3>
+                                <p>Unlimited content ideas tailored to your niche.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">📚</div>
+                                <h3>Content Templates</h3>
+                                <p>Ready-to-use hooks for Instagram and TikTok.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">📅</div>
+                                <h3>Smart Calendar</h3>
+                                <p>Plan your week with AI-powered suggestions.</p>
+                            </div>
+                            <div className="feature-card">
+                                <div className="feature-icon">👥</div>
+                                <h3>Creator Community</h3>
+                                <p>Connect and grow with other creators.</p>
+                            </div>
+                        </div>
+
+                        <div className="email-section">
+                            <h2>Join Creators Worldwide</h2>
+                            <p>Get free weekly content tips</p>
+                            <div className="email-form">
+                                <input 
+                                    type="email" 
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    placeholder="your@email.com"
+                                />
+                                <button onClick={addNewsletterEmail}>Get Tips</button>
+                            </div>
+                        </div>
+
+                        <div className="pricing">
+                            <h2>Plans That Scale With You</h2>
+                            <div className="pricing-grid">
+                                <div className="pricing-card">
+                                    <h3>Free</h3>
+                                    <div className="price">$0</div>
+                                    <ul className="pricing-list">
+                                        <li>5 AI ideas/month</li>
+                                        <li>Templates access</li>
+                                        <li>Community</li>
+                                    </ul>
+                                    <button className="btn" onClick={() => setCurrentPage('signup')}>Get Started</button>
+                                </div>
+                                <div className="pricing-card featured">
+                                    <h3>Creator Pro</h3>
+                                    <div className="price">$29</div>
+                                    <div className="price-period">/month</div>
+                                    <ul className="pricing-list">
+                                        <li>Unlimited AI ideas</li>
+                                        <li>Smart calendar</li>
+                                        <li>Advanced features</li>
+                                        <li>Priority support</li>
+                                    </ul>
+                                    <button className="btn btn-crimson" onClick={() => setCurrentPage('signup')}>Start Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if ((currentPage === 'login' || currentPage === 'signup') && !isLoggedIn) {
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo" onClick={() => setCurrentPage('landing')} style={{ cursor: 'pointer' }}>Content Studio AI</div>
+                        </div>
+                        <div className="auth-form">
+                            <h2>{currentPage === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
+                            
+                            {currentPage === 'signup' && (
+                                <>
+                                    <p style={{ fontSize: '13px', color: '#666', marginBottom: '1rem' }}>Choose your plan:</p>
+                                    <div className="tier-selector">
+                                        <div 
+                                            className={`tier-option ${tier === 'free' ? 'selected' : ''}`}
+                                            onClick={() => setTier('free')}
+                                        >
+                                            <h4>Free</h4>
+                                            <p>Start free</p>
+                                        </div>
+                                        <div 
+                                            className={`tier-option ${tier === 'pro' ? 'selected' : ''}`}
+                                            onClick={() => setTier('pro')}
+                                        >
+                                            <h4>Pro</h4>
+                                            <p>$29/mo</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Sydney Hoeft" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Username</label>
+                                        <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} placeholder="sydney_creates" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Niche</label>
+                                        <input type="text" value={formData.niche} onChange={(e) => setFormData({...formData, niche: e.target.value})} placeholder="e.g., SaaS, Fitness" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Tone</label>
+                                        <select value={formData.tone} onChange={(e) => setFormData({...formData, tone: e.target.value})}>
+                                            <option value="Professional">Professional - {TONE_DESCRIPTIONS['Professional']}</option>
+                                            <option value="Casual">Casual - {TONE_DESCRIPTIONS['Casual']}</option>
+                                            <option value="Creative">Creative - {TONE_DESCRIPTIONS['Creative']}</option>
+                                        </select>
+                                    </div>
+                                </>
+                            )}
+                            
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                            </div>
+                            <div className="form-group">
+                                <label>Password</label>
+                                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+                            </div>
+                            {currentPage === 'signup' && (
+                                <div className="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                                </div>
+                            )}
+                            {loginError && <div className="error">{loginError}</div>}
+                            {signupError && <div className="error">{signupError}</div>}
+                            <button className="btn" style={{ width: '100%', marginTop: '1.5rem' }} onClick={currentPage === 'login' ? handleLogin : handleSignup}>
+                                {currentPage === 'signup' ? 'Create Account' : 'Login'}
+                            </button>
+                            <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '13px', color: '#666' }}>
+                                {currentPage === 'signup' ? 'Already have an account? ' : "Don't have an account? "}
+                                <button style={{ background: 'none', border: 'none', color: '#c41e3a', cursor: 'pointer', fontWeight: '600' }} onClick={() => setCurrentPage(currentPage === 'signup' ? 'login' : 'signup')}>
+                                    {currentPage === 'signup' ? 'Login' : 'Sign up'}
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (isLoggedIn) {
+                return (
+                    <div>
+                        <div className="header">
+                            <div className="logo">Content Studio AI</div>
+                            <div className="nav">
+                                <button className={`nav-link ${currentPage === 'app' ? 'active' : ''}`} onClick={() => setCurrentPage('app')}>Dashboard</button>
+                                <button className={`nav-link ${currentPage === 'templates' ? 'active' : ''}`} onClick={() => setCurrentPage('templates')}>Templates</button>
+                                <button className="nav-link" onClick={handleLogout}>Logout</button>
+                            </div>
+                        </div>
+
+                        {currentPage === 'app' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Welcome, {currentUser.name}! 🌹</h2>
+                                    <p>{tier === 'pro' ? 'Creator Pro' : 'Free Plan'}</p>
+                                </div>
+
+                                {tier === 'free' && (
+                                    <div className="section-card" style={{ background: '#c41e3a10', borderColor: '#c41e3a30' }}>
+                                        <p style={{ color: '#c41e3a', fontWeight: '600', marginBottom: '0.5rem' }}>🚀 Upgrade to Creator Pro</p>
+                                        <p style={{ fontSize: '14px', color: '#666', marginBottom: '1rem' }}>Get unlimited AI ideas, smart calendar, and exclusive features.</p>
+                                        <button className="btn btn-crimson">Upgrade - $29/month</button>
+                                    </div>
+                                )}
+
+                                <div className="widgets-grid">
+                                    <div className="widget">
+                                        <div className="widget-label">📊 Plan</div>
+                                        <div className="widget-value" style={{ fontSize: '20px' }}>{tier === 'pro' ? 'Pro' : 'Free'}</div>
+                                    </div>
+                                    <div className="widget">
+                                        <div className="widget-label">✨ AI Ideas</div>
+                                        <div className="widget-value">{tier === 'pro' ? '∞' : '5'}</div>
+                                    </div>
+                                    <div className="widget">
+                                        <div className="widget-label">📚 Templates</div>
+                                        <div className="widget-value">12</div>
+                                    </div>
+                                </div>
+
+                                <div className="quick-actions">
+                                    <button className="action-btn" onClick={() => showNotif('Crimson AI coming soon!')}>
+                                        <div className="action-icon">💬</div>
+                                        <div className="action-text">Crimson AI</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => setCurrentPage('templates')}>
+                                        <div className="action-icon">📚</div>
+                                        <div className="action-text">Templates</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => showNotif('Calendar coming soon!')}>
+                                        <div className="action-icon">📅</div>
+                                        <div className="action-text">Calendar</div>
+                                    </button>
+                                    <button className="action-btn" onClick={() => showNotif('Community launching soon!')}>
+                                        <div className="action-icon">👥</div>
+                                        <div className="action-text">Community</div>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === 'templates' && (
+                            <div className="dashboard">
+                                <div className="dashboard-header">
+                                    <h2>Content Templates</h2>
+                                    <p>Copy-paste ready content hooks</p>
+                                </div>
+                                <div className="section-card">
+                                    <h3>📸 Instagram</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                                        {INSTAGRAM_TEMPLATES.map(t => (
+                                            <div key={t.id} style={{ background: '#f8f8f8', padding: '1rem', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                                                <h4>{t.title}</h4>
+                                                <p style={{ color: '#666', fontSize: '13px', margin: '0.5rem 0' }}>{t.content}</p>
+                                                <button className="btn btn-secondary btn-small" onClick={() => { navigator.clipboard.writeText(t.content); showNotif('Copied!'); }}>Copy</button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <h3 style={{ marginTop: '2rem' }}>🎬 TikTok</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                                        {TIKTOK_TEMPLATES.map(t => (
+                                            <div key={t.id} style={{ background: '#f8f8f8', padding: '1rem', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                                                <h4>{t.title}</h4>
+                                                <p style={{ color: '#666', fontSize: '13px', margin: '0.5rem 0' }}>{t.content}</p>
+                                                <button className="btn btn-secondary btn-small" onClick={() => { navigator.clipboard.writeText(t.content); showNotif('Copied!'); }}>Copy</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ContentStudioApp />);
+    </script>
+</body>
+</html>
