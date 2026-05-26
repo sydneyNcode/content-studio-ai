@@ -2,8 +2,8 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    - cron: '0 9 */5 * *'  # Runs every 5 days at 9am UTC
-  workflow_dispatch:        # Lets you run it manually from GitHub too
+    - cron: '0 9 */5 * *'
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,10 +11,14 @@ jobs:
 
     steps:
       - name: Ping Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           response=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
+            "${SUPABASE_URL}/rest/v1/keepalive?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
 
           echo "Response code: $response"
 
