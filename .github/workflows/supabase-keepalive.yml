@@ -13,13 +13,12 @@ jobs:
       - name: Ping Supabase
         run: |
           response=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/admin_users?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+            "${{ secrets.SUPABASE_URL }}/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
 
           echo "Response code: $response"
 
-          if [ "$response" = "200" ] || [ "$response" = "406" ]; then
+          if [ "$response" = "200" ]; then
             echo "✅ Supabase is alive!"
           else
             echo "❌ Unexpected response: $response"
