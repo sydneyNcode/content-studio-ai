@@ -3,9 +3,9 @@ import BottomNav from './BottomNav'
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] text-[#1A1008] dark:text-[#F0EBE5] font-['Poppins'] flex flex-col">
+    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] text-[#1A1008] dark:text-[#F0EBE5] font-['Poppins']">
       <Header />
-      <main className="flex-1 flex flex-col pb-16 overflow-hidden">
+      <main className="pb-20">
         {children}
       </main>
       <BottomNav />

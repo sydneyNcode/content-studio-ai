@@ -61,7 +61,7 @@ export default function Crimson() {
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
+    <div className="flex flex-col" style={{ height: 'calc(100svh - 57px - 64px)' }}>
 
       {/* HEADER */}
       <div className="text-center px-6 pt-5 pb-4 border-b border-[#EDE8E3] dark:border-[#3A2E28]">
