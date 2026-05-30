@@ -7,9 +7,9 @@ import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import Dashboard from './components/pages/Dashboard'
 import Crimson from './components/pages/Crimson'
-import Calendar from './components/pages/Calendar'
-import Community from './components/pages/Community'
-import Resources from './components/pages/Resources'
+import Studio from './components/pages/Studio'
+import Library from './components/pages/Library'
+import Lounge from './components/pages/Lounge'
 import Profile from './components/pages/Profile'
 import Layout from './components/layout/Layout'
 
@@ -39,14 +39,12 @@ function AppRoutes() {
       <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
-
       <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
       <Route path="/crimson" element={<ProtectedRoute><Layout><Crimson /></Layout></ProtectedRoute>} />
-      <Route path="/studio" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
-      <Route path="/library" element={<ProtectedRoute><Layout><Resources /></Layout></ProtectedRoute>} />
-      <Route path="/lounge" element={<ProtectedRoute><Layout><Community /></Layout></ProtectedRoute>} />
+      <Route path="/studio" element={<ProtectedRoute><Layout><Studio /></Layout></ProtectedRoute>} />
+      <Route path="/library" element={<ProtectedRoute><Layout><Library /></Layout></ProtectedRoute>} />
+      <Route path="/lounge" element={<ProtectedRoute><Layout><Lounge /></Layout></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
-
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   )
