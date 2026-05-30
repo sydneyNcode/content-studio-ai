@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChatIcon, StudioIcon, LibraryIcon, LoungeIcon, SparkIcon, FlameIcon, CrownIcon } from '../ui/Icons'
 
 const DAILY_QUOTES = [
@@ -51,6 +52,14 @@ function getGreeting() {
 export default function Dashboard() {
   const { user, tier } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const [showUpgraded, setShowUpgraded] = useState(searchParams.get('upgraded') === 'true')
+
+  useEffect(() => {
+    if (showUpgraded) {
+      setTimeout(() => setShowUpgraded(false), 5000)
+    }
+  }, [])
 
   const firstName = user?.first_name || user?.name?.split(' ')[0] || 'Creator'
   const chatsRemaining = Math.max(0, 3 - (user?.chat_count_today || 0))
@@ -59,6 +68,21 @@ export default function Dashboard() {
 
   return (
     <div className="pt-4 pb-2 px-4 flex flex-col gap-4">
+
+      {/* UPGRADE SUCCESS */}
+      {showUpgraded && (
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
+          <div className="flex justify-center mb-2">
+            <SparkIcon size={24} color="#15803d" />
+          </div>
+          <div className="text-green-700 font-['Cormorant_Garamond'] italic text-xl mb-1">
+            Welcome to Pro!
+          </div>
+          <p className="text-green-600 text-xs">
+            You now have unlimited Crimson and access to everything. Let's create!
+          </p>
+        </div>
+      )}
 
       {/* GREETING */}
       <div className="text-center pt-1">

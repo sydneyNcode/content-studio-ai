@@ -8,6 +8,7 @@ export default function Profile() {
   const navigate = useNavigate()
   const [bio, setBio] = useState(user?.bio || '')
   const [saved, setSaved] = useState(false)
+  const [checkingOut, setCheckingOut] = useState(false)
 
   const firstName = user?.first_name || user?.name?.split(' ')[0] || ''
   const lastName = user?.last_name || user?.name?.split(' ').slice(1).join(' ') || ''
@@ -22,6 +23,27 @@ export default function Profile() {
   const handleLogout = () => {
     logout()
     navigate('/')
+  }
+
+  const handleUpgrade = async () => {
+    setCheckingOut(true)
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          priceId: import.meta.env.VITE_ACTIVE_PRICE === 'founding'
+            ? import.meta.env.VITE_STRIPE_FOUNDING_PRICE
+            : import.meta.env.VITE_STRIPE_PRO_PRICE
+        })
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } catch (err) {
+      console.error('Checkout error:', err)
+    }
+    setCheckingOut(false)
   }
 
   return (
@@ -57,9 +79,7 @@ export default function Profile() {
         <button
           onClick={saveBio}
           className={`w-full py-2.5 rounded-full text-sm font-medium transition-all ${
-            saved
-              ? 'bg-green-500 text-white'
-              : 'bg-[#8B1538] text-[#FAF8F5] hover:bg-[#6b0f2b]'
+            saved ? 'bg-green-500 text-white' : 'bg-[#8B1538] text-[#FAF8F5] hover:bg-[#6b0f2b]'
           }`}
         >
           {saved ? '✓ Saved!' : 'Save Bio'}
@@ -91,9 +111,13 @@ export default function Profile() {
             <SparkIcon size={16} color="#FAF8F5" />
             <span className="font-['Cormorant_Garamond'] italic text-lg">Upgrade to Pro</span>
           </div>
-          <p className="text-[#FAF8F5]/70 text-xs mb-4">Unlimited Crimson, priority access, smart calendar and more.</p>
-          <button className="w-full bg-[#FAF8F5] text-[#8B1538] py-2.5 rounded-full text-sm font-semibold hover:bg-white transition-all">
-            Upgrade — $29/mo
+          <p className="text-[#FAF8F5]/70 text-xs mb-4">Unlimited Crimson, all courses, priority access and more.</p>
+          <button
+            onClick={handleUpgrade}
+            disabled={checkingOut}
+            className="w-full bg-[#FAF8F5] text-[#8B1538] py-2.5 rounded-full text-sm font-semibold hover:bg-white transition-all disabled:opacity-50"
+          >
+            {checkingOut ? 'Loading...' : 'Upgrade — $19/mo (Founding Member)'}
           </button>
         </div>
       )}
