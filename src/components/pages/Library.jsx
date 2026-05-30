@@ -7,15 +7,15 @@ const READS = [
   { title: "The Creator's Starter Guide", desc: 'Everything you need to go from zero to posting confidently', tag: 'Free' },
   { title: 'Algorithm Secrets 2025', desc: 'How TikTok and Instagram actually decide who sees your content', tag: 'Pro' },
   { title: 'Content Batching Blueprint', desc: 'Create a month of content in one afternoon', tag: 'Pro' },
-  { title: 'Hook Writing Handbook', desc: 'Stop the scroll every single time with proven formulas', tag: 'Soon' },
-  { title: 'Monetization Roadmap', desc: 'Your step-by-step guide from creator to business owner', tag: 'Soon' },
+  { title: 'Hook Writing Handbook', desc: 'Stop the scroll every single time with proven formulas', tag: 'Coming Soon' },
+  { title: 'Monetization Roadmap', desc: 'Your step-by-step guide from creator to business owner', tag: 'Coming Soon' },
 ]
 
 const COURSES = [
-  { Icon: RocketIcon, title: 'SWC 2.0', desc: 'The complete creator growth course — from zero to thriving', tag: 'Soon' },
-  { Icon: ChartIcon, title: 'Algorithm Mastery', desc: 'Work with TikTok & Instagram algorithms, not against them', tag: 'Soon' },
-  { Icon: CoinIcon, title: 'Monetize Your Content', desc: 'Brand deals, digital products, and passive income', tag: 'Soon' },
-  { Icon: PenIcon, title: 'Caption Copywriting', desc: 'Write captions that convert scrollers into followers', tag: 'Soon' },
+  { Icon: RocketIcon, title: 'SWC 2.0', desc: 'The complete creator growth course — from zero to thriving', tag: 'Coming Soon' },
+  { Icon: ChartIcon, title: 'Algorithm Mastery', desc: 'Work with TikTok & Instagram algorithms, not against them', tag: 'Coming Soon' },
+  { Icon: CoinIcon, title: 'Monetize Your Content', desc: 'Brand deals, digital products, and passive income', tag: 'Coming Soon' },
+  { Icon: PenIcon, title: 'Caption Copywriting', desc: 'Write captions that convert scrollers into followers', tag: 'Coming Soon' },
 ]
 
 const INSTAGRAM = [
@@ -40,7 +40,7 @@ function TagBadge({ tag }) {
   const styles = {
     'Free': 'bg-green-50 text-green-700 border-green-200',
     'Pro': 'bg-[#8B1538]/08 text-[#8B1538] border-[#8B1538]/20',
-    'Soon': 'bg-[#FAF8F5] dark:bg-[#18120F] text-[#A89E96] border-[#EDE8E3] dark:border-[#3A2E28]',
+    'Coming Soon': 'bg-[#FAF8F5] dark:bg-[#18120F] text-[#A89E96] border-[#EDE8E3] dark:border-[#3A2E28]',
   }
   return (
     <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border flex-shrink-0 ${styles[tag]}`}>
