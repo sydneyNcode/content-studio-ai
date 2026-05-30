@@ -111,7 +111,7 @@ export default function Profile() {
             <SparkIcon size={16} color="#FAF8F5" />
             <span className="font-['Cormorant_Garamond'] italic text-lg">Upgrade to Pro</span>
           </div>
-          <p className="text-[#FAF8F5]/70 text-xs mb-4">Unlimited Crimson, all courses, priority access and more.</p>
+          <p className="text-[#FAF8F5]/70 text-xs mb-4">Unlimited Crimson, premium content, priority access and more!</p>
           <button
             onClick={handleUpgrade}
             disabled={checkingOut}

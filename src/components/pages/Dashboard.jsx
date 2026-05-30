@@ -112,29 +112,32 @@ export default function Dashboard() {
           </button>
         ))}
       </div>
-
-      {/* STATS */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
-          <div className="flex justify-center mb-1"><FlameIcon size={16} color="#8B1538" /></div>
-          <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">0</div>
-          <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Streak</div>
-        </div>
-        <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
-          <div className="flex justify-center mb-1"><SparkIcon size={16} color="#8B1538" /></div>
-          <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
-            {tier === 'pro' ? '∞' : `${chatsRemaining}/3`}
-          </div>
-          <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">AI Chats</div>
-        </div>
-        <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
-          <div className="flex justify-center mb-1"><CrownIcon size={16} color="#C4902A" /></div>
-          <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
-            {tier === 'pro' ? 'Pro' : 'Free'}
-          </div>
-          <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Plan</div>
-        </div>
-      </div>
+      
+{/* STATS */}
+<div className="grid grid-cols-3 gap-2">
+  <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
+    <div className="flex justify-center mb-1"><FlameIcon size={16} color="#8B1538" /></div>
+    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">0</div>
+    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Streak</div>
+  </div>
+  <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
+    <div className="flex justify-center mb-1"><SparkIcon size={16} color="#8B1538" /></div>
+    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
+      {tier === 'pro' ? '∞' : `${chatsRemaining}/3`}
+    </div>
+    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">AI Chats</div>
+  </div>
+  <div
+    onClick={() => navigate('/profile')}
+    className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center cursor-pointer hover:border-[#8B1538]/40 transition-all"
+  >
+    <div className="flex justify-center mb-1"><CrownIcon size={16} color="#C4902A" /></div>
+    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
+      {tier === 'pro' ? 'Pro' : 'Free'}
+    </div>
+    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Plan</div>
+  </div>
+</div>
 
       {/* CRIMSON'S DAILY PICK */}
       <div className="bg-white dark:bg-[#2A201A] border border-[#8B1538]/20 border-l-[3px] border-l-[#8B1538] rounded-2xl p-4">
