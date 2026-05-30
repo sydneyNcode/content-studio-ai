@@ -1,6 +1,6 @@
-import { LoungeIcon, SparkIcon } from '../ui/Icons'
+import { LoungeIcon, StarIcon, FlameIcon, ChatIcon, SparkIcon } from '../ui/Icons'
 
-export default function Community() {
+export default function Lounge() {
   return (
     <div className="px-4 pt-6 pb-4">
 
@@ -25,15 +25,17 @@ export default function Community() {
       {/* COMMUNITY FEATURES */}
       <div className="space-y-3 mb-6">
         {[
-          { icon: '🌹', title: 'Creator Spotlights', desc: 'Featured creators from our community' },
-          { icon: '🔥', title: 'Leaderboard', desc: 'Top creators by streak and engagement' },
-          { icon: '💬', title: 'Community Chat', desc: 'Connect with creators in your niche' },
-        ].map((item, i) => (
+          { Icon: StarIcon, title: 'Creator Spotlights', desc: 'Featured creators from our community' },
+          { Icon: FlameIcon, title: 'Leaderboard', desc: 'Top creators by streak and engagement' },
+          { Icon: ChatIcon, title: 'Community Chat', desc: 'Connect with creators in your niche' },
+        ].map(({ Icon, title, desc }, i) => (
           <div key={i} className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-2xl p-4 flex items-center gap-4">
-            <div className="text-2xl">{item.icon}</div>
+            <div className="w-10 h-10 bg-[#8B1538]/08 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Icon size={20} color="#8B1538" />
+            </div>
             <div className="flex-1">
-              <div className="font-['Cormorant_Garamond'] text-base font-semibold text-[#1A1008] dark:text-[#F0EBE5]">{item.title}</div>
-              <div className="text-[#A89E96] text-xs">{item.desc}</div>
+              <div className="font-['Cormorant_Garamond'] text-base font-semibold text-[#1A1008] dark:text-[#F0EBE5]">{title}</div>
+              <div className="text-[#A89E96] text-xs">{desc}</div>
             </div>
             <span className="text-[10px] bg-[#8B1538]/08 text-[#8B1538] px-2.5 py-1 rounded-full font-medium flex-shrink-0">Soon</span>
           </div>

@@ -124,4 +124,87 @@ export function MoonIcon({ size = 18, color = 'currentColor' }) {
       <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
+}// BOOK ICON — for reads
+export function BookIcon({ size = 22, color = '#8B1538' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke={color} strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="9" y1="7" x2="15" y2="7" stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+      <line x1="9" y1="11" x2="15" y2="11" stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+    </svg>
+  )
+}
+
+// INSTAGRAM ICON
+export function InstagramIcon({ size = 18, color = '#6B6058' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="2" width="20" height="20" rx="5" stroke={color} strokeWidth="1.4"/>
+      <circle cx="12" cy="12" r="4" stroke={color} strokeWidth="1.4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill={color}/>
+    </svg>
+  )
+}
+
+// TIKTOK ICON
+export function TikTokIcon({ size = 18, color = '#6B6058' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// ROCKET ICON
+export function RocketIcon({ size = 22, color = '#8B1538' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C12 2 7 6 7 13l5 2 5-2c0-7-5-11-5-11z" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7 13l-2 4 4-1" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M17 13l2 4-4-1" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="11" r="1.5" stroke={color} strokeWidth="1.2"/>
+    </svg>
+  )
+}
+
+// CHART ICON
+export function ChartIcon({ size = 22, color = '#8B1538' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <line x1="3" y1="21" x2="21" y2="21" stroke={color} strokeWidth="1.4" strokeLinecap="round"/>
+      <rect x="5" y="14" width="3" height="7" rx="0.5" stroke={color} strokeWidth="1.4"/>
+      <rect x="10.5" y="9" width="3" height="12" rx="0.5" stroke={color} strokeWidth="1.4"/>
+      <rect x="16" y="4" width="3" height="17" rx="0.5" stroke={color} strokeWidth="1.4"/>
+    </svg>
+  )
+}
+
+// COIN/MONEY ICON
+export function CoinIcon({ size = 22, color = '#C4902A' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.4"/>
+      <path d="M12 7v1m0 8v1m-3-5h4a1 1 0 010 2h-2a1 1 0 000 2h4m-4-4h-1" stroke={color} strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// PEN ICON
+export function PenIcon({ size = 22, color = '#8B1538' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 20h9" stroke={color} strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// STAR ICON — for spotlights
+export function StarIcon({ size = 22, color = '#8B1538' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
 }
