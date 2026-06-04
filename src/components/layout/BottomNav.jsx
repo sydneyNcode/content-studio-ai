@@ -18,12 +18,9 @@ export default function BottomNav() {
   useEffect(() => {
     const handleResize = () => {
       if (window.visualViewport) {
-        const viewportHeight = window.visualViewport.height
-        const windowHeight = window.screen.height
-        setKeyboardOpen(viewportHeight < windowHeight * 0.75)
+        setKeyboardOpen(window.visualViewport.height < window.screen.height * 0.75)
       }
     }
-
     window.visualViewport?.addEventListener('resize', handleResize)
     return () => window.visualViewport?.removeEventListener('resize', handleResize)
   }, [])
@@ -54,10 +51,7 @@ export default function BottomNav() {
             <div className={`transition-transform ${isActive ? 'scale-110' : 'scale-100'}`}>
               <Icon size={22} color={color} active={isActive} />
             </div>
-            <span
-              className="text-[10px] font-['Poppins'] font-medium tracking-wide"
-              style={{ color }}
-            >
+            <span className="text-[10px] font-['Poppins'] font-medium tracking-wide" style={{ color }}>
               {label}
             </span>
           </button>

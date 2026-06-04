@@ -11,11 +11,8 @@ export function ThemeProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    // Update status bar color dynamically
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) {
-      meta.setAttribute('content', darkMode ? '#18120F' : '#FAF8F5')
-    }
+    if (meta) meta.setAttribute('content', darkMode ? '#18120F' : '#FAF8F5')
   }, [darkMode])
 
   const toggleDarkMode = () => {
@@ -27,7 +24,10 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
-      <div className={darkMode ? 'dark' : ''} style={{ height: '100%' }}>
+      <div
+        className={darkMode ? 'dark' : ''}
+        style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+      >
         {children}
       </div>
     </ThemeContext.Provider>
