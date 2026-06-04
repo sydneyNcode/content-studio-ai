@@ -20,30 +20,73 @@ export default function Crimson() {
   const [chatsUsed, setChatsUsed] = useState(user?.chat_count_today || 0)
   const [limitReached, setLimitReached] = useState(false)
   const [expressMode, setExpressMode] = useState(false)
+  const [pendingImage, setPendingImage] = useState(null)
   const bottomRef = useRef(null)
+  const textareaRef = useRef(null)
+  const fileInputRef = useRef(null)
 
-  const isPro = tier === 'pro'
+  const isPro = tier === 'pro' || tier === 'founding'
   const chatsRemaining = Math.max(0, 3 - chatsUsed)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
+  const handleTextareaInput = (e) => {
+    setInput(e.target.value)
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`
+    }
+  }
+
+  const handleFocus = () => {
+    setTimeout(() => {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 400)
+  }
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const result = ev.target.result
+      const base64 = result.split(',')[1]
+      const mediaType = file.type || 'image/jpeg'
+      setPendingImage({ base64, mediaType, preview: result })
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
   const sendMessage = async (text) => {
     const msg = text || input.trim()
-    if (!msg || loading || limitReached) return
+    if ((!msg && !pendingImage) || loading || limitReached) return
+
+    const imageToSend = pendingImage
     setInput('')
-    setMessages(prev => [...prev, { role: 'user', content: msg }])
+    setPendingImage(null)
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
+
+    const userMsg = { role: 'user', content: msg, image: imageToSend?.preview }
+    setMessages(prev => [...prev, userMsg])
     setLoading(true)
 
     try {
+      const body = { userId: user.id, message: msg }
+      if (imageToSend) {
+        body.imageBase64 = imageToSend.base64
+        body.imageType = imageToSend.mediaType
+      }
+
       const res = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, message: msg })
+        body: JSON.stringify(body)
       })
       const data = await res.json()
-
       if (res.status === 429) {
         setLimitReached(true)
         setMessages(prev => [...prev, { role: 'crimson', content: data.error }])
@@ -60,34 +103,39 @@ export default function Crimson() {
     setLoading(false)
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }
+
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100svh - 57px - 64px)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
 
       {/* HEADER */}
-      <div className="text-center px-6 pt-5 pb-4 border-b border-[#EDE8E3] dark:border-[#3A2E28]">
-        <h2 className="font-['Cormorant_Garamond'] italic text-2xl text-[#8B1538] mb-1">Crimson</h2>
+      <div className="text-center px-6 pt-4 pb-3 border-b border-[#EDE8E3] dark:border-[#3A2E28]">
+        <h2 className="font-['Cormorant_Garamond'] italic text-2xl text-[#8B1538] mb-0.5">Crimson</h2>
         <p className="text-[#A89E96] text-xs">Your personal content coach</p>
-        <div className="mt-2 flex items-center justify-center gap-2">
+        <div className="mt-1.5 flex items-center justify-center gap-2">
           <span className="bg-[#8B1538]/08 text-[#8B1538] text-[10px] font-semibold px-3 py-1 rounded-full">
             {isPro ? '✦ Unlimited' : `${chatsRemaining}/3 chats today`}
           </span>
-          {expressMode && (
-            <span className="text-[#A89E96] text-[10px] italic">💫 Express mode</span>
-          )}
+          {expressMode && <span className="text-[#A89E96] text-[10px] italic">Express mode</span>}
         </div>
       </div>
 
       {/* MESSAGES */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-        {messages.length === 0 ? (
+      <div className="px-4 pt-4 space-y-3" style={{ paddingBottom: '90px' }}>
+        {messages.length === 0 && (
           <div className="text-center pt-8">
-            <div className="flex justify-center mb-4">
-              <ChatIcon size={32} active={true} />
+            <div className="flex justify-center mb-3">
+              <ChatIcon size={28} active={true} />
             </div>
             <h3 className="font-['Cormorant_Garamond'] italic text-xl text-[#8B1538] mb-1">
               Hey, {user?.first_name || user?.name?.split(' ')[0]} 🌹
             </h3>
-            <p className="text-[#A89E96] text-xs mb-1">I know your niche — {user?.niche}</p>
+            <p className="text-[#A89E96] text-xs mb-1">I know your niche — {user?.niche || 'content creation'}</p>
             <p className="text-[#A89E96] text-xs mb-6">I'm here when you need me.</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {SUGGESTIONS.map((s, i) => (
@@ -101,19 +149,33 @@ export default function Crimson() {
               ))}
             </div>
           </div>
-        ) : (
-          messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                msg.role === 'user'
-                  ? 'bg-[#8B1538] text-[#FAF8F5] rounded-br-sm'
-                  : 'bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] text-[#1A1008] dark:text-[#F0EBE5] rounded-bl-sm'
-              }`}>
-                {msg.content}
-              </div>
-            </div>
-          ))
         )}
+
+        {messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[82%] ${msg.role === 'user' ? '' : ''}`}>
+              {msg.image && (
+                <div className={`mb-1 ${msg.role === 'user' ? 'flex justify-end' : ''}`}>
+                  <img
+                    src={msg.image}
+                    alt="attachment"
+                    className="rounded-2xl max-w-[240px] max-h-[240px] object-cover"
+                    style={{ border: '1px solid rgba(139,21,56,0.2)' }}
+                  />
+                </div>
+              )}
+              {msg.content && (
+                <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === 'user'
+                    ? 'bg-[#8B1538] text-[#FAF8F5] rounded-br-sm'
+                    : 'bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] text-[#1A1008] dark:text-[#F0EBE5] rounded-bl-sm'
+                }`}>
+                  {msg.content}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
 
         {loading && (
           <div className="flex justify-start">
@@ -129,33 +191,90 @@ export default function Crimson() {
           <div className="mx-2 bg-[#FAF8F5] dark:bg-[#2A201A] border border-[#8B1538]/20 rounded-2xl p-4 text-center">
             <p className="font-['Cormorant_Garamond'] text-lg text-[#8B1538] mb-1">Daily limit reached 🌹</p>
             <p className="text-[#A89E96] text-xs mb-3">Upgrade to Pro for unlimited Crimson</p>
-            <button className="bg-[#8B1538] text-[#FAF8F5] text-xs font-medium px-4 py-2 rounded-full hover:bg-[#6b0f2b] transition-all">
-              Upgrade to Pro — $29/mo
+            <button className="bg-[#8B1538] text-[#FAF8F5] text-xs font-medium px-4 py-2 rounded-full">
+              Upgrade — $19/mo
             </button>
           </div>
         )}
-
         <div ref={bottomRef} />
       </div>
 
-      {/* INPUT */}
-      <div className="px-4 pb-4 pt-2 border-t border-[#EDE8E3] dark:border-[#3A2E28]">
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
+      {/* HIDDEN FILE INPUT */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageSelect}
+        style={{ display: 'none' }}
+      />
+
+      {/* FLOATING INPUT BAR */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '64px',
+          left: 0,
+          right: 0,
+          padding: '6px 12px 8px',
+          zIndex: 40,
+          background: '#FAF8F5',
+        }}
+        className="dark:bg-[#18120F]"
+      >
+        {/* IMAGE PREVIEW */}
+        {pendingImage && (
+          <div className="mb-2 flex items-center gap-2">
+            <div className="relative">
+              <img
+                src={pendingImage.preview}
+                alt="preview"
+                className="h-16 w-16 rounded-xl object-cover"
+                style={{ border: '1px solid #EDE8E3' }}
+              />
+              <button
+                onClick={() => setPendingImage(null)}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#8B1538] rounded-full flex items-center justify-center"
+              >
+                <i className="ti ti-x text-white" style={{ fontSize: 10 }} />
+              </button>
+            </div>
+            <p className="text-[#A89E96] text-xs italic">Image ready — add a message or send!</p>
+          </div>
+        )}
+
+        <div
+          className="flex items-end gap-2 bg-white dark:bg-[#2A201A] rounded-2xl px-3 py-2"
+          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.08)', border: '1px solid #EDE8E3' }}
+        >
+          {/* ATTACHMENT */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#8B1538]/08 transition-all mb-0.5"
+          >
+            <i className="ti ti-paperclip" style={{ fontSize: 16, color: pendingImage ? '#8B1538' : '#A89E96' }} />
+          </button>
+
+          {/* TEXTAREA */}
+          <textarea
+            ref={textareaRef}
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && sendMessage()}
-            placeholder="Ask Crimson anything..."
+            onChange={handleTextareaInput}
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            placeholder={pendingImage ? "Add a message (optional)..." : "Message Crimson..."}
             disabled={loading || limitReached}
-            className="flex-1 bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-full px-4 py-2.5 text-sm text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none focus:border-[#8B1538] transition-colors disabled:opacity-50"
+            rows={1}
+            className="flex-1 bg-transparent text-sm text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none disabled:opacity-50 resize-none leading-relaxed py-1.5"
+            style={{ minHeight: '36px', maxHeight: '120px' }}
           />
+
+          {/* SEND */}
           <button
             onClick={() => sendMessage()}
-            disabled={loading || !input.trim() || limitReached}
-            className="w-10 h-10 bg-[#8B1538] rounded-full flex items-center justify-center hover:bg-[#6b0f2b] transition-all disabled:opacity-40 flex-shrink-0"
+            disabled={loading || (!input.trim() && !pendingImage) || limitReached}
+            className="flex-shrink-0 w-8 h-8 bg-[#8B1538] rounded-full flex items-center justify-center transition-all disabled:opacity-40 mb-0.5"
           >
-            <SparkIcon size={16} color="#FAF8F5" />
+            <SparkIcon size={14} color="#FAF8F5" />
           </button>
         </div>
       </div>

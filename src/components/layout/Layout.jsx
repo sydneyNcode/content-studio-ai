@@ -3,9 +3,20 @@ import BottomNav from './BottomNav'
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] text-[#1A1008] dark:text-[#F0EBE5] font-['Poppins']">
+    <div
+      className="bg-[#FAF8F5] dark:bg-[#18120F] text-[#1A1008] dark:text-[#F0EBE5] font-['Poppins']"
+      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+    >
       <Header />
-      <main className="pb-20">
+      <main
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          paddingBottom: '64px'
+        }}
+      >
         {children}
       </main>
       <BottomNav />

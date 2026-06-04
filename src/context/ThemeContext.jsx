@@ -10,6 +10,14 @@ export function ThemeProvider({ children }) {
     if (saved) setDarkMode(JSON.parse(saved))
   }, [])
 
+  useEffect(() => {
+    // Update status bar color dynamically
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) {
+      meta.setAttribute('content', darkMode ? '#18120F' : '#FAF8F5')
+    }
+  }, [darkMode])
+
   const toggleDarkMode = () => {
     setDarkMode(prev => {
       localStorage.setItem('csai_darkMode', JSON.stringify(!prev))
@@ -19,7 +27,7 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
-      <div className={darkMode ? 'dark' : ''} style={{ minHeight: '100vh' }}>
+      <div className={darkMode ? 'dark' : ''} style={{ height: '100%' }}>
         {children}
       </div>
     </ThemeContext.Provider>
