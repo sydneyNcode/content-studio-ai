@@ -30,4 +30,7 @@ button, nav { user-select: none; -webkit-user-select: none; }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(139,21,56,0.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(139,21,56,0.2); border-radius: 10px; }/* Prevent iOS zoom on all inputs */
+input, textarea, select {
+  font-size: 16px !important;
+}

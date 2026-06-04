@@ -40,7 +40,31 @@ export default function Crimson() {
       textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`
     }
   }
+// LOAD saved messages on mount
+useEffect(() => {
+  try {
+    const saved = localStorage.getItem(`crimson_messages_${user?.id}`)
+    if (saved) {
+      const { messages: savedMessages, userId } = JSON.parse(saved)
+      if (userId === user?.id && savedMessages.length > 0) {
+        setMessages(savedMessages)
+      }
+    }
+  } catch {}
+}, [])
 
+// SAVE messages whenever they change
+useEffect(() => {
+  if (messages.length > 0) {
+    try {
+      localStorage.setItem(`crimson_messages_${user?.id}`, JSON.stringify({
+        messages,
+        userId: user?.id,
+        savedAt: Date.now()
+      }))
+    } catch {}
+  }
+}, [messages])
   const handleFocus = () => {
     setTimeout(() => {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

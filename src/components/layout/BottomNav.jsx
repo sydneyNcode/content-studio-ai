@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { HomeIcon, ChatIcon, StudioIcon, LibraryIcon, LoungeIcon } from '../ui/Icons'
 
 const NAV_ITEMS = [
@@ -12,6 +13,22 @@ const NAV_ITEMS = [
 export default function BottomNav() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [keyboardOpen, setKeyboardOpen] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height
+        const windowHeight = window.screen.height
+        setKeyboardOpen(viewportHeight < windowHeight * 0.75)
+      }
+    }
+
+    window.visualViewport?.addEventListener('resize', handleResize)
+    return () => window.visualViewport?.removeEventListener('resize', handleResize)
+  }, [])
+
+  if (keyboardOpen) return null
 
   return (
     <nav
