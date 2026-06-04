@@ -113,8 +113,11 @@ export default function Crimson() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
 
-      {/* HEADER */}
-      <div className="text-center px-6 pt-4 pb-3 border-b border-[#EDE8E3] dark:border-[#3A2E28]">
+      {/* STICKY CRIMSON HEADER */}
+      <div
+        className="text-center px-6 pt-4 pb-3 border-b border-[#EDE8E3] dark:border-[#3A2E28] bg-[#FAF8F5] dark:bg-[#18120F]"
+        style={{ position: 'sticky', top: 0, zIndex: 30 }}
+      >
         <h2 className="font-['Cormorant_Garamond'] italic text-2xl text-[#8B1538] mb-0.5">Crimson</h2>
         <p className="text-[#A89E96] text-xs">Your personal content coach</p>
         <div className="mt-1.5 flex items-center justify-center gap-2">
@@ -126,7 +129,10 @@ export default function Crimson() {
       </div>
 
       {/* MESSAGES */}
-      <div className="px-4 pt-4 space-y-3" style={{ paddingBottom: '90px' }}>
+      <div
+        className="px-4 pt-4 space-y-3"
+        style={{ paddingBottom: 'calc(100px + env(safe-area-inset-bottom))' }}
+      >
         {messages.length === 0 && (
           <div className="text-center pt-8">
             <div className="flex justify-center mb-3">
@@ -153,13 +159,13 @@ export default function Crimson() {
 
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[82%] ${msg.role === 'user' ? '' : ''}`}>
+            <div className={`max-w-[82%]`}>
               {msg.image && (
                 <div className={`mb-1 ${msg.role === 'user' ? 'flex justify-end' : ''}`}>
                   <img
                     src={msg.image}
                     alt="attachment"
-                    className="rounded-2xl max-w-[240px] max-h-[240px] object-cover"
+                    className="rounded-2xl max-w-[200px] max-h-[200px] object-cover"
                     style={{ border: '1px solid rgba(139,21,56,0.2)' }}
                   />
                 </div>
@@ -191,9 +197,7 @@ export default function Crimson() {
           <div className="mx-2 bg-[#FAF8F5] dark:bg-[#2A201A] border border-[#8B1538]/20 rounded-2xl p-4 text-center">
             <p className="font-['Cormorant_Garamond'] text-lg text-[#8B1538] mb-1">Daily limit reached 🌹</p>
             <p className="text-[#A89E96] text-xs mb-3">Upgrade to Pro for unlimited Crimson</p>
-            <button className="bg-[#8B1538] text-[#FAF8F5] text-xs font-medium px-4 py-2 rounded-full">
-              Upgrade — $19/mo
-            </button>
+            <button className="bg-[#8B1538] text-[#FAF8F5] text-xs font-medium px-4 py-2 rounded-full">Upgrade — $19/mo</button>
           </div>
         )}
         <div ref={bottomRef} />
@@ -208,11 +212,11 @@ export default function Crimson() {
         style={{ display: 'none' }}
       />
 
-      {/* FLOATING INPUT BAR */}
+      {/* FLOATING INPUT — fixed above nav, accounts for safe area */}
       <div
         style={{
           position: 'fixed',
-          bottom: '64px',
+          bottom: 'calc(64px + env(safe-area-inset-bottom))',
           left: 0,
           right: 0,
           padding: '6px 12px 8px',
@@ -221,14 +225,13 @@ export default function Crimson() {
         }}
         className="dark:bg-[#18120F]"
       >
-        {/* IMAGE PREVIEW */}
         {pendingImage && (
           <div className="mb-2 flex items-center gap-2">
             <div className="relative">
               <img
                 src={pendingImage.preview}
                 alt="preview"
-                className="h-16 w-16 rounded-xl object-cover"
+                className="h-14 w-14 rounded-xl object-cover"
                 style={{ border: '1px solid #EDE8E3' }}
               />
               <button
@@ -246,7 +249,6 @@ export default function Crimson() {
           className="flex items-end gap-2 bg-white dark:bg-[#2A201A] rounded-2xl px-3 py-2"
           style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.08)', border: '1px solid #EDE8E3' }}
         >
-          {/* ATTACHMENT */}
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#8B1538]/08 transition-all mb-0.5"
@@ -254,7 +256,6 @@ export default function Crimson() {
             <i className="ti ti-paperclip" style={{ fontSize: 16, color: pendingImage ? '#8B1538' : '#A89E96' }} />
           </button>
 
-          {/* TEXTAREA */}
           <textarea
             ref={textareaRef}
             value={input}
@@ -264,11 +265,10 @@ export default function Crimson() {
             placeholder={pendingImage ? "Add a message (optional)..." : "Message Crimson..."}
             disabled={loading || limitReached}
             rows={1}
-            className="flex-1 bg-transparent text-sm text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none disabled:opacity-50 resize-none leading-relaxed py-1.5"
-            style={{ minHeight: '36px', maxHeight: '120px' }}
+            className="flex-1 bg-transparent text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none disabled:opacity-50 resize-none leading-relaxed py-1.5"
+            style={{ minHeight: '36px', maxHeight: '120px', fontSize: '16px' }}
           />
 
-          {/* SEND */}
           <button
             onClick={() => sendMessage()}
             disabled={loading || (!input.trim() && !pendingImage) || limitReached}
