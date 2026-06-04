@@ -21,44 +21,20 @@ export default function Crimson() {
   const [limitReached, setLimitReached] = useState(false)
   const [expressMode, setExpressMode] = useState(false)
   const [pendingImage, setPendingImage] = useState(null)
-  const [keyboardOpen, setKeyboardOpen] = useState(false)
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
   const fileInputRef = useRef(null)
-  const inputBarRef = useRef(null)
+  const messagesRef = useRef(null)
 
   const isPro = tier === 'pro' || tier === 'founding'
   const chatsRemaining = Math.max(0, 3 - chatsUsed)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+    }
   }, [messages, loading])
 
-  // PRECISE keyboard positioning using visualViewport
-  useEffect(() => {
-    const updatePosition = () => {
-      if (!inputBarRef.current) return
-      const vv = window.visualViewport
-      if (!vv) return
-      const keyboardHeight = window.innerHeight - vv.height
-      if (keyboardHeight > 100) {
-        setKeyboardOpen(true)
-        inputBarRef.current.style.bottom = `${keyboardHeight}px`
-      } else {
-        setKeyboardOpen(false)
-        inputBarRef.current.style.bottom = 'calc(64px + env(safe-area-inset-bottom))'
-      }
-    }
-    window.visualViewport?.addEventListener('resize', updatePosition)
-    window.visualViewport?.addEventListener('scroll', updatePosition)
-    updatePosition()
-    return () => {
-      window.visualViewport?.removeEventListener('resize', updatePosition)
-      window.visualViewport?.removeEventListener('scroll', updatePosition)
-    }
-  }, [])
-
-  // Load saved messages
   useEffect(() => {
     try {
       const saved = localStorage.getItem(`crimson_messages_${user?.id}`)
@@ -71,7 +47,6 @@ export default function Crimson() {
     } catch {}
   }, [])
 
-  // Save messages
   useEffect(() => {
     if (messages.length > 0) {
       try {
@@ -91,12 +66,6 @@ export default function Crimson() {
       textarea.style.height = 'auto'
       textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`
     }
-  }
-
-  const handleFocus = () => {
-    setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 400)
   }
 
   const handleImageSelect = (e) => {
@@ -163,12 +132,12 @@ export default function Crimson() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* STICKY HEADER */}
       <div
         className="text-center px-6 pt-4 pb-3 border-b border-[#EDE8E3] dark:border-[#3A2E28] bg-[#FAF8F5] dark:bg-[#18120F]"
-        style={{ position: 'sticky', top: 0, zIndex: 30 }}
+        style={{ flexShrink: 0 }}
       >
         <h2 className="font-['Cormorant_Garamond'] italic text-2xl text-[#8B1538] mb-0.5">Crimson</h2>
         <p className="text-[#A89E96] text-xs">Your personal content coach</p>
@@ -180,8 +149,17 @@ export default function Crimson() {
         </div>
       </div>
 
-      {/* MESSAGES */}
-      <div className="px-4 pt-4 space-y-3" style={{ paddingBottom: '120px' }}>
+      {/* MESSAGES — scrolls independently */}
+      <div
+        ref={messagesRef}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain'
+        }}
+        className="px-4 py-4 space-y-3"
+      >
         {messages.length === 0 && (
           <div className="text-center pt-8">
             <div className="flex justify-center mb-3">
@@ -247,20 +225,10 @@ export default function Crimson() {
       {/* HIDDEN FILE INPUT */}
       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} style={{ display: 'none' }} />
 
-      {/* FLOATING INPUT — precisely positioned by visualViewport */}
+      {/* INPUT BAR — in normal flow, NOT fixed */}
       <div
-        ref={inputBarRef}
-        style={{
-          position: 'fixed',
-          bottom: 'calc(64px + env(safe-area-inset-bottom))',
-          left: 0,
-          right: 0,
-          padding: '6px 12px 8px',
-          zIndex: 40,
-          background: '#FAF8F5',
-          transition: 'bottom 0.05s ease'
-        }}
-        className="dark:bg-[#18120F]"
+        style={{ flexShrink: 0 }}
+        className="px-4 pb-3 pt-2 border-t border-[#EDE8E3] dark:border-[#3A2E28] bg-[#FAF8F5] dark:bg-[#18120F]"
       >
         {pendingImage && (
           <div className="mb-2 flex items-center gap-2">
@@ -289,7 +257,6 @@ export default function Crimson() {
             value={input}
             onChange={handleTextareaInput}
             onKeyDown={handleKeyDown}
-            onFocus={handleFocus}
             placeholder={pendingImage ? "Add a message (optional)..." : "Message Crimson..."}
             disabled={loading || limitReached}
             rows={1}

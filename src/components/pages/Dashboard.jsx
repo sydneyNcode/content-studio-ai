@@ -56,9 +56,7 @@ export default function Dashboard() {
   const [showUpgraded, setShowUpgraded] = useState(searchParams.get('upgraded') === 'true')
 
   useEffect(() => {
-    if (showUpgraded) {
-      setTimeout(() => setShowUpgraded(false), 5000)
-    }
+    if (showUpgraded) setTimeout(() => setShowUpgraded(false), 5000)
   }, [])
 
   const firstName = user?.first_name || user?.name?.split(' ')[0] || 'Creator'
@@ -67,91 +65,86 @@ export default function Dashboard() {
   const crimsonPick = getDailyItem(CRIMSON_PICKS)
 
   return (
-    <div className="pt-4 pb-2 px-4 flex flex-col gap-4">
+    <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div className="pt-4 pb-2 px-4 flex flex-col gap-4">
 
-      {/* UPGRADE SUCCESS */}
-      {showUpgraded && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
-          <div className="flex justify-center mb-2">
-            <SparkIcon size={24} color="#15803d" />
+        {showUpgraded && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
+            <div className="flex justify-center mb-2">
+              <SparkIcon size={24} color="#15803d" />
+            </div>
+            <div className="text-green-700 font-['Cormorant_Garamond'] italic text-xl mb-1">Welcome to Pro!</div>
+            <p className="text-green-600 text-xs">You now have unlimited Crimson and access to everything. Let's create!</p>
           </div>
-          <div className="text-green-700 font-['Cormorant_Garamond'] italic text-xl mb-1">
-            Welcome to Pro!
-          </div>
-          <p className="text-green-600 text-xs">
-            You now have unlimited Crimson and access to everything. Let's create!
+        )}
+
+        {/* GREETING */}
+        <div className="text-center pt-1">
+          <h1 className="font-['Cormorant_Garamond'] italic text-3xl text-[#8B1538] leading-tight">
+            {getGreeting()}, {firstName}
+          </h1>
+          <p className="text-[#A89E96] dark:text-[#8A7E78] text-[11px] italic mt-1 max-w-xs mx-auto">
+            "{todayQuote}"
           </p>
         </div>
-      )}
 
-      {/* GREETING */}
-      <div className="text-center pt-1">
-        <h1 className="font-['Cormorant_Garamond'] italic text-3xl text-[#8B1538] leading-tight">
-          {getGreeting()}, {firstName}
-        </h1>
-        <p className="text-[#A89E96] dark:text-[#8A7E78] text-[11px] italic mt-1 max-w-xs mx-auto">
-          "{todayQuote}"
-        </p>
-      </div>
-
-      {/* ACTION CARDS */}
-      <div className="grid grid-cols-2 gap-2.5">
-        {ACTIONS.map(({ path, Icon, title, desc }) => (
-          <button
-            key={path}
-            onClick={() => navigate(path)}
-            className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-2xl p-3.5 text-left hover:border-[#8B1538]/40 hover:shadow-md transition-all group"
-          >
-            <div className="mb-2 group-hover:scale-110 transition-transform w-fit">
-              <Icon size={20} active={false} />
-            </div>
-            <div className="font-['Cormorant_Garamond'] text-sm font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
-              {title}
-            </div>
-            <div className="text-[#A89E96] text-[10px] mt-0.5">{desc}</div>
-          </button>
-        ))}
-      </div>
-      
-{/* STATS */}
-<div className="grid grid-cols-3 gap-2">
-  <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
-    <div className="flex justify-center mb-1"><FlameIcon size={16} color="#8B1538" /></div>
-    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">0</div>
-    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Streak</div>
-  </div>
-  <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
-    <div className="flex justify-center mb-1"><SparkIcon size={16} color="#8B1538" /></div>
-    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
-      {tier === 'pro' ? '∞' : `${chatsRemaining}/3`}
-    </div>
-    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">AI Chats</div>
-  </div>
-  <div
-    onClick={() => navigate('/profile')}
-    className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center cursor-pointer hover:border-[#8B1538]/40 transition-all"
-  >
-    <div className="flex justify-center mb-1"><CrownIcon size={16} color="#C4902A" /></div>
-    <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
-      {tier === 'pro' ? 'Pro' : 'Free'}
-    </div>
-    <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Plan</div>
-  </div>
-</div>
-
-      {/* CRIMSON'S DAILY PICK */}
-      <div className="bg-white dark:bg-[#2A201A] border border-[#8B1538]/20 border-l-[3px] border-l-[#8B1538] rounded-2xl p-4">
-        <div className="flex items-center gap-1.5 mb-2">
-          <SparkIcon size={12} color="#8B1538" />
-          <span className="text-[#8B1538] text-[9px] font-semibold uppercase tracking-widest">
-            Crimson's Daily Pick
-          </span>
+        {/* ACTION CARDS */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {ACTIONS.map(({ path, Icon, title, desc }) => (
+            <button
+              key={path}
+              onClick={() => navigate(path)}
+              className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-2xl p-3.5 text-left hover:border-[#8B1538]/40 hover:shadow-md transition-all group"
+            >
+              <div className="mb-2 group-hover:scale-110 transition-transform w-fit">
+                <Icon size={20} active={false} />
+              </div>
+              <div className="font-['Cormorant_Garamond'] text-sm font-semibold text-[#1A1008] dark:text-[#F0EBE5]">{title}</div>
+              <div className="text-[#A89E96] text-[10px] mt-0.5">{desc}</div>
+            </button>
+          ))}
         </div>
-        <p className="text-[#6B6058] dark:text-[#C0B4AC] text-xs leading-relaxed italic">
-          {crimsonPick}
-        </p>
-      </div>
 
+        {/* STATS */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
+            <div className="flex justify-center mb-1"><FlameIcon size={16} color="#8B1538" /></div>
+            <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">0</div>
+            <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Streak</div>
+          </div>
+          <div className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center">
+            <div className="flex justify-center mb-1"><SparkIcon size={16} color="#8B1538" /></div>
+            <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
+              {tier === 'pro' || tier === 'founding' ? '∞' : `${chatsRemaining}/3`}
+            </div>
+            <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">AI Chats</div>
+          </div>
+          <div
+            onClick={() => navigate('/profile')}
+            className="bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl p-2.5 text-center cursor-pointer hover:border-[#8B1538]/40 transition-all"
+          >
+            <div className="flex justify-center mb-1">
+              {tier === 'founding' ? <CrownIcon size={16} color="#8B1538" /> :
+               tier === 'pro' ? <CrownIcon size={16} color="#C4902A" /> :
+               <CrownIcon size={16} color="#A89E96" />}
+            </div>
+            <div className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#1A1008] dark:text-[#F0EBE5]">
+              {tier === 'founding' ? 'Found.' : tier === 'pro' ? 'Pro' : 'Free'}
+            </div>
+            <div className="text-[#A89E96] text-[9px] uppercase tracking-wide font-medium">Plan</div>
+          </div>
+        </div>
+
+        {/* CRIMSON'S DAILY PICK */}
+        <div className="bg-white dark:bg-[#2A201A] border border-[#8B1538]/20 border-l-[3px] border-l-[#8B1538] rounded-2xl p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <SparkIcon size={12} color="#8B1538" />
+            <span className="text-[#8B1538] text-[9px] font-semibold uppercase tracking-widest">Crimson's Daily Pick</span>
+          </div>
+          <p className="text-[#6B6058] dark:text-[#C0B4AC] text-xs leading-relaxed italic">{crimsonPick}</p>
+        </div>
+
+      </div>
     </div>
   )
 }
