@@ -24,10 +24,7 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
-      <div
-        className={darkMode ? 'dark' : ''}
-        style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
-      >
+      <div className={darkMode ? 'dark' : ''}>
         {children}
       </div>
     </ThemeContext.Provider>
