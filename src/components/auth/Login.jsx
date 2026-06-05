@@ -45,10 +45,7 @@ export default function Login() {
         >
           Content Studio AI
         </div>
-        <button
-          onClick={toggleDarkMode}
-          className="w-8 h-8 flex items-center justify-center text-[#6B6058] dark:text-[#C0B4AC] hover:text-[#8B1538] transition-colors"
-        >
+        <button onClick={toggleDarkMode} className="w-8 h-8 flex items-center justify-center text-[#6B6058] dark:text-[#C0B4AC] hover:text-[#8B1538] transition-colors">
           <i className={`ti ${darkMode ? 'ti-sun' : 'ti-moon-stars'}`} style={{ fontSize: 18 }} />
         </button>
       </header>
@@ -73,7 +70,15 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B6058] dark:text-[#C0B4AC] mb-1.5">Password</label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-xs font-medium text-[#6B6058] dark:text-[#C0B4AC]">Password</label>
+                <button
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-xs text-[#A89E96] hover:text-[#8B1538] transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
