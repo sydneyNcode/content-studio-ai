@@ -423,7 +423,7 @@ export default function Studio() {
               </button>
             </div>
 
-            <div className="px-5 py-4 space-y-5">
+            <div className="px-5 py-4 space-y-5 pb-10">
 
               {/* TITLE */}
               <div>
