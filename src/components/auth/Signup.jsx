@@ -12,6 +12,8 @@ export default function Signup() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const [form, setForm] = useState({
     first_name: '', last_name: '', username: '',
@@ -57,7 +59,6 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] flex flex-col font-['Poppins']">
 
-      {/* HEADER */}
       <header className="flex justify-between items-center px-6 py-4 border-b border-[#8B1538]/08">
         <div
           className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#8B1538] tracking-wide cursor-pointer"
@@ -73,7 +74,6 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
 
-          {/* STEP INDICATOR */}
           <div className="flex gap-2 mb-8">
             {[1, 2].map(s => (
               <div key={s} className={`h-1 flex-1 rounded-full transition-all ${step >= s ? 'bg-[#8B1538]' : 'bg-[#EDE8E3] dark:bg-[#3A2E28]'}`} />
@@ -91,22 +91,22 @@ export default function Signup() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelClass}>First Name</label>
-                    <input type="text" value={form.first_name} onChange={e => update('first_name', e.target.value)} placeholder="First Name" className={inputClass} />
+                    <input type="text" value={form.first_name} onChange={e => update('first_name', e.target.value)} placeholder="First name" className={inputClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Last Name</label>
-                    <input type="text" value={form.last_name} onChange={e => update('last_name', e.target.value)} placeholder="Last Name" className={inputClass} />
+                    <input type="text" value={form.last_name} onChange={e => update('last_name', e.target.value)} placeholder="Last name" className={inputClass} />
                   </div>
                 </div>
 
                 <div>
                   <label className={labelClass}>Username</label>
-                  <input type="text" value={form.username} onChange={e => update('username', e.target.value)} placeholder="sydney_creates" className={inputClass} />
+                  <input type="text" value={form.username} onChange={e => update('username', e.target.value)} placeholder="your_username" className={inputClass} />
                 </div>
 
                 <div>
                   <label className={labelClass}>Your Niche</label>
-                  <input type="text" value={form.niche} onChange={e => update('niche', e.target.value)} placeholder="e.g. Fitness, SAHM, Lifestyle..." className={inputClass} />
+                  <input type="text" value={form.niche} onChange={e => update('niche', e.target.value)} placeholder="e.g. Fitness, Lifestyle, SaaS" className={inputClass} />
                 </div>
 
                 <div>
@@ -121,8 +121,7 @@ export default function Signup() {
                 <button
                   onClick={() => {
                     if (!form.first_name || !form.last_name || !form.username || !form.niche) {
-                      setError('Please fill in all fields')
-                      return
+                      setError('Please fill in all fields'); return
                     }
                     setError('')
                     setStep(2)
@@ -152,17 +151,53 @@ export default function Signup() {
 
                 <div>
                   <label className={labelClass}>Password</label>
-                  <input type="password" value={form.password} onChange={e => update('password', e.target.value)} placeholder="••••••••" className={inputClass} />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={e => update('password', e.target.value)}
+                      placeholder="••••••••"
+                      className={`${inputClass} pr-11`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(p => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A89E96] hover:text-[#8B1538] transition-colors"
+                    >
+                      <i className={`ti ${showPassword ? 'ti-eye-off' : 'ti-eye'}`} style={{ fontSize: 16 }} />
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className={labelClass}>Confirm Password</label>
-                  <input type="password" value={form.confirm_password} onChange={e => update('confirm_password', e.target.value)} placeholder="••••••••" className={inputClass} />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={form.confirm_password}
+                      onChange={e => update('confirm_password', e.target.value)}
+                      placeholder="••••••••"
+                      className={`${inputClass} pr-11`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(p => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A89E96] hover:text-[#8B1538] transition-colors"
+                    >
+                      <i className={`ti ${showConfirmPassword ? 'ti-eye-off' : 'ti-eye'}`} style={{ fontSize: 16 }} />
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className={labelClass}>Bio <span className="text-[#C0B4AC]">(optional)</span></label>
-                  <textarea value={form.bio} onChange={e => update('bio', e.target.value)} placeholder="Tell your audience about yourself..." rows={3} className={`${inputClass} resize-none`} />
+                  <textarea
+                    value={form.bio}
+                    onChange={e => update('bio', e.target.value)}
+                    placeholder="Tell your audience about yourself..."
+                    rows={3}
+                    className={`${inputClass} resize-none`}
+                  />
                 </div>
 
                 {error && <p className="text-[#8B1538] text-xs">{error}</p>}
@@ -175,17 +210,12 @@ export default function Signup() {
                   {loading ? 'Creating account...' : 'Create Account'}
                 </button>
 
-                <button
-                  onClick={() => setStep(1)}
-                  className="w-full text-[#A89E96] text-xs hover:text-[#8B1538] transition-colors"
-                >
+                <button onClick={() => setStep(1)} className="w-full text-[#A89E96] text-xs hover:text-[#8B1538] transition-colors">
                   ← Back
                 </button>
 
                 {loading && (
-                  <p className="text-center text-xs text-[#A89E96] italic">
-                    First request may take ~30 seconds...
-                  </p>
+                  <p className="text-center text-xs text-[#A89E96] italic">First request may take ~30 seconds...</p>
                 )}
               </div>
             </>
