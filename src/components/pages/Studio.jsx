@@ -410,7 +410,7 @@ export default function Studio() {
         <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setShowBuilder(false)}>
           <div
             className="absolute bottom-0 left-0 right-0 bg-[#FAF8F5] dark:bg-[#18120F] rounded-t-2xl"
-            style={{ maxHeight: '92vh', overflowY: 'auto' }}
+            style={{ maxHeight: '92vh', overflowY: 'auto', paddingBottom: '40px' }}
             onClick={e => e.stopPropagation()}
           >
             {/* BUILDER HEADER */}

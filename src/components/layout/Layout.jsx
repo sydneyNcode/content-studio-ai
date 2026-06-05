@@ -5,7 +5,7 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] text-[#1A1008] dark:text-[#F0EBE5] font-['Poppins']">
       <Header />
-      <main className="pb-24">
+      <main className="pb-32">
         {children}
       </main>
       <BottomNav />

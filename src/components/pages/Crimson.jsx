@@ -110,7 +110,7 @@ export default function Crimson() {
   }
 
   return (
-    <div style={{ minHeight: '100%', paddingBottom: '130px' }}>
+    <div style={{ minHeight: '100%', paddingBottom: '140px' }}>
 
       {/* HEADER */}
       <div
@@ -185,14 +185,18 @@ export default function Crimson() {
         <div ref={bottomRef} />
       </div>
 
-      {/* HIDDEN FILE INPUT */}
       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} style={{ display: 'none' }} />
 
-      {/* FIXED INPUT BAR */}
-      <div
-        style={{ position: 'fixed', bottom: '64px', left: 0, right: 0, padding: '6px 12px 8px', zIndex: 40, background: '#FAF8F5' }}
-        className="dark:bg-[#18120F]"
-      >
+      {/* FLOATING INPUT */}
+      <div style={{
+        position: 'fixed',
+        bottom: 'calc(64px + env(safe-area-inset-bottom))',
+        left: 0,
+        right: 0,
+        padding: '6px 12px 8px',
+        zIndex: 40,
+        background: '#FAF8F5'
+      }} className="dark:bg-[#18120F]">
         {pendingImage && (
           <div className="mb-2 flex items-center gap-2">
             <div className="relative">
