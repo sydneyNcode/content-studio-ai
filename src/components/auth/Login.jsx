@@ -11,6 +11,7 @@ export default function Login() {
   const { darkMode, toggleDarkMode } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -37,7 +38,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#18120F] flex flex-col font-['Poppins']">
 
-      {/* HEADER */}
       <header className="flex justify-between items-center px-6 py-4 border-b border-[#8B1538]/08">
         <div
           className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#8B1538] tracking-wide cursor-pointer"
@@ -53,7 +53,6 @@ export default function Login() {
         </button>
       </header>
 
-      {/* FORM */}
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           <h2 className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#1A1008] dark:text-[#F0EBE5] mb-1">
@@ -75,19 +74,26 @@ export default function Login() {
 
             <div>
               <label className="block text-xs font-medium text-[#6B6058] dark:text-[#C0B4AC] mb-1.5">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                className="w-full bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl px-4 py-3 text-sm text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none focus:border-[#8B1538] transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                  className="w-full bg-white dark:bg-[#2A201A] border border-[#EDE8E3] dark:border-[#3A2E28] rounded-xl px-4 py-3 pr-11 text-sm text-[#1A1008] dark:text-[#F0EBE5] placeholder-[#C0B4AC] focus:outline-none focus:border-[#8B1538] transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(p => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A89E96] hover:text-[#8B1538] transition-colors"
+                >
+                  <i className={`ti ${showPassword ? 'ti-eye-off' : 'ti-eye'}`} style={{ fontSize: 16 }} />
+                </button>
+              </div>
             </div>
 
-            {error && (
-              <p className="text-[#8B1538] text-xs">{error}</p>
-            )}
+            {error && <p className="text-[#8B1538] text-xs">{error}</p>}
 
             <button
               onClick={handleLogin}
@@ -106,10 +112,7 @@ export default function Login() {
 
           <p className="text-center text-xs text-[#A89E96] mt-6">
             Don't have an account?{' '}
-            <button
-              onClick={() => navigate('/signup')}
-              className="text-[#8B1538] font-medium hover:underline"
-            >
+            <button onClick={() => navigate('/signup')} className="text-[#8B1538] font-medium hover:underline">
               Sign up
             </button>
           </p>

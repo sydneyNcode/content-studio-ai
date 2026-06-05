@@ -325,7 +325,7 @@ export default function Studio() {
       {/* FLOATING + BUTTON */}
       <button
         onClick={() => openBuilder(null, selectedDay)}
-        className="fixed bottom-20 right-4 w-12 h-12 bg-[#8B1538] rounded-full flex items-center justify-center shadow-lg hover:bg-[#6b0f2b] transition-all z-30"
+        className="fixed bottom-28 right-4 w-12 h-12 bg-[#8B1538] rounded-full flex items-center justify-center shadow-lg hover:bg-[#6b0f2b] transition-all z-30"
       >
         <i className="ti ti-plus text-white" style={{ fontSize: 20 }} />
       </button>
