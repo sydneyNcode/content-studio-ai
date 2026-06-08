@@ -36,7 +36,7 @@ export default function Landing() {
             Login
           </button>
           <button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/founding')}
             className="bg-[#8B1538] text-[#FAF8F5] text-sm font-medium px-4 py-2 rounded-full hover:bg-[#6b0f2b] transition-all shadow-sm"
           >
             Get Started
@@ -54,7 +54,7 @@ export default function Landing() {
         </p>
         <div className="flex gap-3 justify-center flex-wrap">
           <button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/founding')}
             className="bg-[#8B1538] text-[#FAF8F5] px-6 py-3 rounded-full font-medium hover:bg-[#6b0f2b] transition-all shadow-md text-sm"
           >
             Get Started Free
@@ -99,7 +99,7 @@ export default function Landing() {
               ))}
             </ul>
             <button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/founding')}
               className="w-full border border-[#8B1538]/30 text-[#8B1538] py-2.5 rounded-full text-sm font-medium hover:bg-[#8B1538]/05 transition-all"
             >
               Get Started
@@ -118,7 +118,7 @@ export default function Landing() {
               ))}
             </ul>
             <button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/founding')}
               className="w-full bg-[#FAF8F5] text-[#8B1538] py-2.5 rounded-full text-sm font-semibold hover:bg-white transition-all"
             >
               Start Free Trial
