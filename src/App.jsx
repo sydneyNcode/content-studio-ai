@@ -14,6 +14,7 @@ import Library from './components/pages/Library'
 import Lounge from './components/pages/Lounge'
 import Profile from './components/pages/Profile'
 import Founding from './components/pages/Founding'
+import About from './components/pages/About'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -36,6 +37,7 @@ function AppRoutes() {
       <Route path="/lounge" element={<ProtectedRoute><Layout><Lounge /></Layout></ProtectedRoute>} />
       <Route path="/community" element={<ProtectedRoute><Layout><Lounge /></Layout></ProtectedRoute>} />
       <Route path="/founding" element={<Founding />} />
+      <Route path="/about" element={<About />} />
       <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
